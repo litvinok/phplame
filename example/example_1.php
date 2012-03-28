@@ -1,8 +1,8 @@
 <?php
 /**
- * Author: Alex Litvinok
- * Date: 3/15/12
- * Time: 6:02 AM
+ * Example test with use library PHPLame
+ * Take look to keyword @suite, @test, etc.
+ *
  * @suite: Example test
  */
 class example_1 extends PHPLame

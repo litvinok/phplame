@@ -7,7 +7,7 @@
 define( 'PHPLAME_HOME', dirname(__FILE__) );
 define( 'PHPLAME_VERSION', 'dev' );
 
-require_once PHPLAME_HOME.'/lib/autoload.php';
+require_once( PHPLAME_HOME.'/lib/autoload.php' );
 
 new PHPLameSuite( array_pop($argv), getopt('', array(
     'junit::',

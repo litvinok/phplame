@@ -35,14 +35,14 @@ class PHPLameSuite
         $this -> options = $argv;
 
         if ( isset($argv['bootstrap']) && is_file($argv['bootstrap']) ) {
-            require_once $argv['bootstrap'];
+            require_once( $argv['bootstrap'] );
         }
 
         if ( is_dir( $this -> base )) {
-            foreach( $this -> scandir( $this -> base ) as $file ) $this -> build( $file );
+            foreach ( $this -> scandir( $this -> base ) as $file ) $this -> build( $file );
         }
 
-        elseif( is_file( $this -> base )) {
+        elseif ( is_file( $this -> base )) {
             $this -> build( $this -> base );
         }
 
@@ -56,7 +56,7 @@ class PHPLameSuite
      */
     function build( $file )
     {
-        foreach( $this -> scanfile( $file ) as $class => $params )
+        foreach ( $this -> scanfile( $file ) as $class => $params )
         {
             $testcase = new $class( $this -> options );
             $this -> report( $class, $params, $testcase -> output );
@@ -96,10 +96,14 @@ class PHPLameSuite
         $files = array();
         if ($handle = opendir($dir))
         {
-            while( false !== ($file = readdir($handle)) )
+            while ( false !== ($file = readdir($handle)) )
+            {
                 if ( $file!= "." && $file != ".." && ( $target = sprintf( "%s/%s", $dir, $file) ) )
-                    if( is_dir($target) ) $files = array_merge( $files, get_files( $target ));
+                {
+                    if ( is_dir($target) ) $files = array_merge( $files, get_files( $target ));
                     else $files[] = $target;
+                }
+            }
             closedir($handle);
         }
         return $files;
@@ -113,11 +117,11 @@ class PHPLameSuite
      */
     function scanfile( $file )
     {
-        require_once $file;
+        require_once( $file );
 
         $suites = array();
         $tokens = token_get_all( file_get_contents($file) );
-        for( $i = 2; $i < count($tokens); $i++ )
+        for ( $i = 2; $i < count($tokens); $i++ )
         {
             if ( $tokens[$i-2][0] == T_CLASS && $tokens[$i-1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING )
             {
@@ -129,7 +133,7 @@ class PHPLameSuite
                 if ( strlen($comment) !== FALSE )
                 {
                     preg_match_all("/@(\w+)\s*(?::\s*(.*))?/x", $comment, $matchs );
-                    foreach( $matchs[1] as $key => $name) $params[ strtolower($name) ] = trim( $matchs[2][$key] );
+                    foreach ( $matchs[1] as $key => $name) $params[ strtolower($name) ] = trim( $matchs[2][$key] );
                 }
 
                 if ( ( strpos( strtolower($class), 'test' ) !== FALSE || isset($params['suite']) )

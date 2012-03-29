@@ -5,12 +5,12 @@
  * Time: 7:24 AM
  */
 
-function phplame_autoload( $class = NULL )
+function phplame_autoload( $class = null )
 {
-    static $classes = NULL;
-    static $path    = NULL;
+    static $classes = null;
+    static $path    = null;
 
-    if ($classes === NULL) {
+    if ( $classes === null ) {
         $classes = array(
             'phplame' => '/framework.php',
             'phplamesuite' => '/suite.php',
@@ -19,7 +19,7 @@ function phplame_autoload( $class = NULL )
         $path = dirname(__FILE__);
     }
 
-    if ($class === NULL) {
+    if ( $class === null ) {
         $result = array(__FILE__);
 
         foreach ($classes as $file) {
@@ -30,9 +30,9 @@ function phplame_autoload( $class = NULL )
 
     $cn = strtolower($class);
 
-    if (isset($classes[$cn])) {
+    if ( isset($classes[$cn]) ) {
         $file = $path . $classes[$cn];
-        require $file;
+        require_once( $file );
     }
 }
 

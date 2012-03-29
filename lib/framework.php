@@ -40,8 +40,10 @@ class PHPLame
                 {
                     $tags = array_flip( spliti(',', $params['tags']) );
                     foreach( spliti(',', $options['tags']) as $tag )
+                    {
                         if ( strpos( $tag, '!' ) === 0 && !isset($tags[$tag]) ) $accept = true;
                         elseif ( strpos( $tag, '!' ) !== 0 && isset($tags[$tag]) ) $accept = true;
+                    }
                 }
 
                 if ( $accept )
@@ -78,7 +80,10 @@ class PHPLame
         $tmp = tmpfile();
         $meta = stream_get_meta_data( $tmp );
 
-        if ( (int)$params['thread'] <= 1 ) $this -> thread( $method, $tmp, (int)$params['repeat'] );
+        if ( (int)$params['thread'] <= 1 )
+        {
+            $this -> thread( $method, $tmp, (int)$params['repeat'] );
+        }
         else
         {
             $threads = $waits = (int)$params['thread'];
@@ -97,8 +102,17 @@ class PHPLame
 
         // get report of threads: case | pid | time | ms | status | errmsg
         while ( ( list( $mhd, $thd, $tm, $ms, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
-            if ( $mhd === $method -> name ) $this -> output[ $name ][ $thd ][] =
-                array ( 'ms' => $ms, 'ok' => $st, 'tm' => $tm, 'err' => $em  );
+        {
+            if ( $mhd === $method -> name )
+            {
+                $this -> output[ $name ][ $thd ][] = array(
+                        'ms' => $ms,
+                        'ok' => $st,
+                        'tm' => $tm,
+                        'err' => $em
+                    );
+            }
+        }
 
         $this -> output[ $name ]['description'] = array(
             'lines' => array( $method -> getStartLine(), $method -> getEndLine() ),
@@ -140,7 +154,7 @@ class PHPLame
             }
 
             fwrite($hander, sprintf (
-            // case | pid | time | ms | status | errmsg
+                // case | pid | time | ms | status | errmsg
                 "%s\t%d\t%0.6f\t%0.6f\t%b\t%s\n",
                 $method -> name,
                 getmypid(),

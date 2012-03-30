@@ -1,6 +1,3 @@
-PHPLame
-=======
-
 Installation
 ------------
 
@@ -11,7 +8,7 @@ Usage
 
     $ phplame/phplame [options] <testcases>
 
-Supported options
+Options
 ------------
     --junit         Path to JUnit reports.
     --tags          Tags for select testcases

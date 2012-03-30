@@ -58,9 +58,16 @@ class PHPLameSuite
     {
         foreach ( $this -> scanfile( $file ) as $class => $params )
         {
-            $testcase = new $class( $this -> options );
-            $this -> report( $class, $params, $testcase -> output );
-            $this -> resume[] = "class $class :: $file";
+            try
+            {
+                $testcase = new $class( $this -> options );
+                $this -> report( $class, $params, $testcase -> output );
+                $this -> resume[] = "class $class :: $file";
+            }
+            catch( Exception $e )
+            {
+                echo $e -> getMessage();
+            }
         }
     }
 
@@ -73,6 +80,8 @@ class PHPLameSuite
      */
     function report( $class, $params, $output )
     {
+        if ( empty($output)) return false;
+
         if ( isset( $this -> options['junit']) && !empty($this -> options['junit']) )
         {
             $report = new PHPLame_JUnit( $class, $params, $output );

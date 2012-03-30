@@ -100,7 +100,7 @@ class PHPLameSuite
             {
                 if ( $file!= "." && $file != ".." && ( $target = sprintf( "%s/%s", $dir, $file) ) )
                 {
-                    if ( is_dir($target) ) $files = array_merge( $files, get_files( $target ));
+                    if ( is_dir($target) ) $files = array_merge( $files, $this -> scandir( $target ));
                     else $files[] = $target;
                 }
             }

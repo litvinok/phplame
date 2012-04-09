@@ -34,11 +34,9 @@ class PHPLameSuite
         $this -> options = $argv;
 
         putenv("PHPLAME_PRINT_STATUS=0"); // storage of env for threads
-        $GLOBALS['SILENT_MODE'] = false;
 
-        if ( isset($argv['silent']) ) {
-            $GLOBALS['SILENT_MODE'] = true;
-        }
+        $GLOBALS['SILENT_MODE'] = isset($argv['silent']) ? true : false;
+        $GLOBALS['AVERAGE_MODE'] = isset($argv['average']) ? true : false;
 
         $this -> before();
 

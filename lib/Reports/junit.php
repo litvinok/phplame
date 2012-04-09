@@ -81,7 +81,7 @@ class PHPLame_JUnit
             $testcase = $this -> testcase( $child, array(
                 'name' =>  $namecase,
                 'classname' => $name,
-                'time' => sprintf( '%0.6f', $time / $count ),
+                'time' => sprintf( '%0.6f', $GLOBALS['AVERAGE_MODE'] === true ? $time / $count : $time ),
                 'status' => $status,
                 'line' => $description['lines'][0],
             ));

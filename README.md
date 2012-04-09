@@ -14,6 +14,8 @@ Options
     --tags          Tags for select testcases
     --bootstrap     Bootstrap file
     --debug         Debug mode, print result to STDOUT
+    --silent        Silent mode
+    --average       Enable average time for casetest of report (default: false)
 
 Features
 ------------
@@ -25,4 +27,4 @@ Features
 Example
 ------------
 
-    $ phplame/phplame --junit=reports/ --tags=aa examples/
+    $ phplame/phplame --junit=reports/ --tags=aa --silent=true --average=true examples/

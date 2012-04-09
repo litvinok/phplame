@@ -34,6 +34,12 @@ class PHPLame
                 $accept = true;
                 if ( !isset($params['repeat']) ) $params['repeat'] = 1;
                 if ( !isset($params['thread']) ) $params['thread'] = 1;
+                if ( !isset($params['usleep']) ) $params['usleep'] = 0;
+
+                if ( isset($params['sleep']) && !isset($params['usleep']) )
+                {
+                    $params['usleep'] = (int)$params['sleep'] * 1000000;
+                }
 
                 if ( isset($options['tags']) ) $accept = false;
                 if ( isset($params['tags']) && isset($options['tags']) )
@@ -66,7 +72,16 @@ class PHPLame
      *
      * @param  boolean $pass
      */
-    private function pretty( $pass = true ) { echo $pass ? '.' : 'F'; }
+    private function pretty( $pass = true )
+    {
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            $count = getenv('PHPLAME_PRINT_STATUS');
+            echo $pass ? "\033[32m.\033[39m\033[49m" : "\033[41mF\033[39m\033[49m";
+            if ( $count++ >= 50 ) { $count = 0; echo PHP_EOL; }
+            putenv("PHPLAME_PRINT_STATUS=$count");
+        }
+    }
 
     /**
      * Run case test
@@ -91,7 +106,7 @@ class PHPLame
             {
                 if ( !pcntl_fork() ) // child
                 {
-                    $this -> thread( $method, $tmp, (int)$params['repeat'] );
+                    $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'] );
                     exit;
                 }
             }
@@ -130,12 +145,13 @@ class PHPLame
      * @param  object  $hander
      * @param  integer $count
      */
-    private function thread( &$method, &$hander, $count = 1 )
+    private function thread( &$method, &$hander, $count = 1, $ms = 0 )
     {
         $this -> beforeThread(); // hook before thread
 
         for( $repeat=0; $repeat < $count; $repeat++ ) // for repeat
         {
+            if ( $ms > 0 ) usleep( $ms ); // Delays execution (ms)
             $this -> before(); // hook before case
 
             $time = microtime( true );

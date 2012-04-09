@@ -29,10 +29,18 @@ class PHPLameSuite
      */
     function __construct( $base = '.', $argv = array() )
     {
-        $this -> before();
 
         $this -> base = $base;
         $this -> options = $argv;
+
+        putenv("PHPLAME_PRINT_STATUS=0"); // storage of env for threads
+        $GLOBALS['SILENT_MODE'] = false;
+
+        if ( isset($argv['silent']) ) {
+            $GLOBALS['SILENT_MODE'] = true;
+        }
+
+        $this -> before();
 
         if ( isset($argv['bootstrap']) && is_file($argv['bootstrap']) ) {
             require_once( $argv['bootstrap'] );
@@ -158,7 +166,10 @@ class PHPLameSuite
      */
     function before()
     {
-        printf( "PHPLame Benchmark | version: %s%s%s", PHPLAME_VERSION, PHP_EOL,PHP_EOL);
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
+        }
     }
 
     /**
@@ -166,7 +177,10 @@ class PHPLameSuite
      */
     function after()
     {
-        global $resume;
-        printf( "%s%s---%s%s%s%s", PHP_EOL,PHP_EOL,PHP_EOL,join( PHP_EOL, $this -> resume ),PHP_EOL,PHP_EOL);
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            global $resume;
+            printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
+        }
     }
 }

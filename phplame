@@ -14,4 +14,5 @@ new PHPLameSuite( array_pop($argv), getopt('', array(
     'tags::',
     'bootstrap::',
     'debug:',
+    'silent:',
 )));

@@ -21,8 +21,15 @@ Features
 ------------
 
 * Multithreading
+    @thread: 10
 * Custom repeat of test and reporting average of time
+    @repeat: 1000
 * Use specific name of testsuite and testcase
+    @suite: CustomSuiteTest1
+    @test: CustomCaseTest1
+* Custom hooks before testcase
+    @before: name_function
+    @beforeCase: name_function
 
 Example
 ------------

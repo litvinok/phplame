@@ -20,8 +20,18 @@ class PHPLame
 
         foreach ( $class -> getMethods() as $method ) // for case
         {
-            $params = array( 'repeat' => 1, 'thread' => 1, 'usleep' => 0, 'before' => false, 'after' => false );
             $comment = $method -> getDocComment();
+            $params = array(
+                'repeat' => 1,
+                'thread' => 1,
+                'usleep' => 0,
+                'before' => false,
+                'after' => false,
+                'beforeThread' => false,
+                'afterThread' => false,
+                'beforeCase' => false,
+                'afterCase' => false,
+            );
 
             if ( strlen($comment) !== FALSE )
             {
@@ -92,6 +102,9 @@ class PHPLame
         $tmp = tmpfile();
         $meta = stream_get_meta_data( $tmp );
 
+        $this -> beforeCase(); // hook before case
+        if ( $params['beforeCase'] != false ) call_user_func_array( array($this, $params['beforeCase']), array());
+
         if ( (int)$params['thread'] <= 1 )
         {
             $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'], $params );
@@ -109,6 +122,9 @@ class PHPLame
             }
             while ( $waits --> 0) pcntl_wait($status);
         }
+
+        if ( $params['afterCase'] != false ) call_user_func_array( array($this, $params['afterCase']), array());
+        $this -> afterCase(); // hook after case
 
         fseek($tmp,0);
 
@@ -145,12 +161,13 @@ class PHPLame
     private function thread( &$method, &$hander, $count = 1, $ms = 0, &$params )
     {
         $this -> beforeThread(); // hook before thread
+        if ( $params['beforeThread'] != false ) call_user_func_array( array($this, $params['beforeThread']), array());
 
         for( $repeat=0; $repeat < $count; $repeat++ ) // for repeat
         {
             if ( $ms > 0 ) usleep( $ms ); // Delays execution (ms)
-            $this -> before(); // hook before case
 
+            $this -> before(); // hook before case
             if ( $params['before'] != false ) call_user_func_array( array($this, $params['before']), array());
 
             $time = microtime( true );
@@ -180,11 +197,11 @@ class PHPLame
             ));
 
             if ( $params['after'] != false ) call_user_func_array( array($this, $params['after']), array());
-
             $this -> after(); // hook after case
 
         } // forend repeat
 
+        if ( $params['afterThread'] != false ) call_user_func_array( array($this, $params['afterThread']), array());
         $this -> afterThread(); // hook after thread
     }
 
@@ -197,4 +214,6 @@ class PHPLame
     public function afterClass() {}
     public function beforeThread() {}
     public function afterThread() {}
+    public function beforeCase() {}
+    public function afterCase() {}
 }

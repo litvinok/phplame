@@ -35,6 +35,8 @@ class PHPLame
                 if ( !isset($params['repeat']) ) $params['repeat'] = 1;
                 if ( !isset($params['thread']) ) $params['thread'] = 1;
                 if ( !isset($params['usleep']) ) $params['usleep'] = 0;
+                if ( !isset($params['before']) ) $params['before'] = false;
+                if ( !isset($params['after']) )  $params['after'] = false;
 
                 if ( isset($params['sleep']) && !isset($params['usleep']) )
                 {
@@ -97,7 +99,7 @@ class PHPLame
 
         if ( (int)$params['thread'] <= 1 )
         {
-            $this -> thread( $method, $tmp, (int)$params['repeat'] );
+            $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'], $params );
         }
         else
         {
@@ -106,7 +108,7 @@ class PHPLame
             {
                 if ( !pcntl_fork() ) // child
                 {
-                    $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'] );
+                    $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'], $params );
                     exit;
                 }
             }
@@ -145,7 +147,7 @@ class PHPLame
      * @param  object  $hander
      * @param  integer $count
      */
-    private function thread( &$method, &$hander, $count = 1, $ms = 0 )
+    private function thread( &$method, &$hander, $count = 1, $ms = 0, &$params )
     {
         $this -> beforeThread(); // hook before thread
 
@@ -153,6 +155,8 @@ class PHPLame
         {
             if ( $ms > 0 ) usleep( $ms ); // Delays execution (ms)
             $this -> before(); // hook before case
+
+            if ( $params['before'] != false ) call_user_func_array( array($this, $params['before']), array());
 
             $time = microtime( true );
             $exception = false;
@@ -179,6 +183,8 @@ class PHPLame
                 $exception === false,
                 $exception !== false ? $exception : ''
             ));
+
+            if ( $params['after'] != false ) call_user_func_array( array($this, $params['after']), array());
 
             $this -> after(); // hook after case
 

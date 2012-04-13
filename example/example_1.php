@@ -14,6 +14,7 @@ class example_1 extends PHPLame
      * @repeat: 3
      * @thread: 2
      * @tags: a, aa
+     * @before: before_case_one
      */
     public function case_one( $a )
     {
@@ -27,4 +28,8 @@ class example_1 extends PHPLame
         throw new Exception('W');
     }
 
+    public function before_case_one()
+    {
+        $this -> aa++;
+    }
 }

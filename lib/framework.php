@@ -20,7 +20,7 @@ class PHPLame
 
         foreach ( $class -> getMethods() as $method ) // for case
         {
-            $params = array();
+            $params = array( 'repeat' => 1, 'thread' => 1, 'usleep' => 0, 'before' => false, 'after' => false );
             $comment = $method -> getDocComment();
 
             if ( strlen($comment) !== FALSE )
@@ -32,11 +32,6 @@ class PHPLame
             if ( strpos( $method -> name, 'test') || isset($params['test']) ) // if case
             {
                 $accept = true;
-                if ( !isset($params['repeat']) ) $params['repeat'] = 1;
-                if ( !isset($params['thread']) ) $params['thread'] = 1;
-                if ( !isset($params['usleep']) ) $params['usleep'] = 0;
-                if ( !isset($params['before']) ) $params['before'] = false;
-                if ( !isset($params['after']) )  $params['after'] = false;
 
                 if ( isset($params['sleep']) && !isset($params['usleep']) )
                 {

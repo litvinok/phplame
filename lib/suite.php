@@ -69,6 +69,8 @@ class PHPLameSuite
                 $testcase = new $class( $this -> options );
                 $this -> report( $class, $params, $testcase -> output );
                 $this -> resume[] = "class $class :: $file";
+
+                unset($testcase); gc_collect_cycles();
             }
             catch( Exception $e )
             {

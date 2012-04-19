@@ -177,10 +177,10 @@ class PHPLameSuite
      */
     function after()
     {
-        if ( $GLOBALS['SILENT_MODE'] !== true )
-        {
+        //if ( $GLOBALS['SILENT_MODE'] !== true )
+        //{
             global $resume;
             printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
-        }
+        //}
     }
 }

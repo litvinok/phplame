@@ -166,10 +166,7 @@ class PHPLameSuite
      */
     function before()
     {
-        if ( $GLOBALS['SILENT_MODE'] !== true )
-        {
-            printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
-        }
+        printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
     }
 
     /**
@@ -177,10 +174,7 @@ class PHPLameSuite
      */
     function after()
     {
-        //if ( $GLOBALS['SILENT_MODE'] !== true )
-        //{
-            global $resume;
-            printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
-        //}
+        global $resume;
+        printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
     }
 }

@@ -26,7 +26,7 @@ class PHPLame
         if ( $GLOBALS['NOCOLOR_MODE'] !== true )
         {
             $this -> color = array(
-                'name' => "\033[33m%s\033[0m",
+                'name' => "\033[36m%s\033[0m",
                 'pass' => "\033[32m%s\033[0m",
                 'fail' => "\033[41m%s\033[0m",
             );

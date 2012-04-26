@@ -15,6 +15,8 @@ Options
     --bootstrap     Bootstrap file
     --debug         Debug mode, print result to STDOUT
     --silent        Silent mode
+    --verbose       Show status for each testcase
+    --nocolor       Disallow colored bash
     --average       Enable average time for casetest of report (default: false)
 
 Features

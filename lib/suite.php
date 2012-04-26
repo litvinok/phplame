@@ -36,8 +36,11 @@ class PHPLameSuite
         putenv("PHPLAME_PRINT_STATUS=0"); // storage of env for threads
 
         $GLOBALS['SILENT_MODE'] = isset($argv['silent']) ? true : false;
+        $GLOBALS['VERBOSE_MODE'] = isset($argv['verbose']) ? true : false;
         $GLOBALS['AVERAGE_MODE'] = isset($argv['average']) ? true : false;
+        $GLOBALS['NOCOLOR_MODE'] = isset($argv['nocolor']) ? true : false;
 
+        $this -> check();
         $this -> before();
 
         if ( isset($argv['bootstrap']) && is_file($argv['bootstrap']) ) {
@@ -161,12 +164,30 @@ class PHPLameSuite
         return $suites;
     }
 
+
+    /**
+     * Check options for run
+     */
+    function check()
+    {
+        if ( isset($this -> options['junit']) && !file_exists( $this -> options['junit'] ) )
+        {
+            $this -> error( "Can't find directory for JUnit reports" );
+        }
+    }
+
+
     /**
      * Print to STDOUT name of software and version
      */
     function before()
     {
-        printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            if ( $GLOBALS['NOCOLOR_MODE'] !== true )
+                printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
+            else printf( "PHPLame Benchmark | version: %s\n\n", PHPLAME_VERSION );
+        }
     }
 
     /**
@@ -174,7 +195,23 @@ class PHPLameSuite
      */
     function after()
     {
-        global $resume;
-        printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            global $resume;
+            if ( $GLOBALS['NOCOLOR_MODE'] !== true )
+                printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
+            else printf( "\n\n---\n%s\n\n", join( PHP_EOL, $this -> resume ) );
+        }
     }
+
+    /**
+     * Throw error message
+     *
+     * @param $message
+     */
+    function error( $message )
+    {
+        die( "PHPLame: $message ".PHP_EOL );
+    }
+
 }

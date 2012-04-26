@@ -12,11 +12,26 @@ class PHPLame
      */
     public $output;
 
+    /**
+     * @var    Color output schema
+     */
+    private $color;
+
     function __construct( $options = array() )
     {
         $class = new ReflectionClass( $this );
         $cases = array();
         $output = array();
+
+        if ( $GLOBALS['NOCOLOR_MODE'] !== true )
+        {
+            $this -> color = array(
+                'name' => "\033[33m%s\033[0m",
+                'pass' => "\033[32m%s\033[0m",
+                'fail' => "\033[41m%s\033[0m",
+            );
+        }
+        else $this -> color = array( 'name' => "%s", 'pass' => "%s", 'fail' => "%s" );
 
         foreach ( $class -> getMethods() as $method ) // for case
         {
@@ -81,10 +96,13 @@ class PHPLame
      */
     private function pretty( $pass = true )
     {
-        if ( $GLOBALS['SILENT_MODE'] !== true )
+        if ( $GLOBALS['VERBOSE_MODE'] == true && $GLOBALS['SILENT_MODE'] !== true )
         {
             $count = getenv('PHPLAME_PRINT_STATUS');
-            echo $pass ? "\033[32m.\033[39m\033[49m" : "\033[41mF\033[39m\033[49m";
+
+            if ( $pass ) printf( $this -> color['pass'], "." );
+            else printf( $this -> color['fail'], "F" );
+
             if ( $count++ >= 50 ) { $count = 0; echo PHP_EOL; }
             putenv("PHPLAME_PRINT_STATUS=$count");
         }
@@ -101,6 +119,13 @@ class PHPLame
     {
         $tmp = tmpfile();
         $meta = stream_get_meta_data( $tmp );
+
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            printf( $this -> color['name'], "* $name" );
+            if ( $GLOBALS['VERBOSE_MODE'] !== true ) echo ' .. ';
+            else echo ':'. PHP_EOL;
+        }
 
         $this -> beforeCase(); // hook before case
         if ( $params['beforeCase'] != false ) call_user_func_array( array($this, $params['beforeCase']), array());
@@ -127,12 +152,16 @@ class PHPLame
         $this -> afterCase(); // hook after case
 
         fseek($tmp,0);
+        $passed = true;
+        $time = 0;
 
         // get report of threads: case | pid | time | ms | status | errmsg
         while ( ( list( $mhd, $thd, $tm, $ms, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
         {
             if ( $mhd === $method -> name )
             {
+                if ( $st != true ) $passed = false;
+                $time += $ms;
                 $this -> output[ $name ][ $thd ][] = array(
                         'ms' => $ms,
                         'ok' => $st,
@@ -140,6 +169,17 @@ class PHPLame
                         'err' => $em
                     );
             }
+        }
+
+        if ( $GLOBALS['SILENT_MODE'] !== true )
+        {
+            if ( $GLOBALS['VERBOSE_MODE'] !== true )
+            {
+                if ( $passed ) printf( $this -> color['pass'], "ok" );
+                else printf( $this -> color['fail'], "error" );
+            }
+            else echo PHP_EOL.PHP_EOL;
+            echo PHP_EOL;
         }
 
         $this -> output[ $name ]['description'] = array(

@@ -15,5 +15,7 @@ new PHPLameSuite( array_pop($argv), getopt('', array(
     'bootstrap::',
     'debug:',
     'silent:',
+    'verbose:',
+    'nocolor:',
     'average:'
 )));

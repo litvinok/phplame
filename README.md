@@ -22,7 +22,7 @@ Options
 Features
 ------------
 
-* Multithreading
+* Multithreading emulations
 * Custom repeat of test and reporting average of time
 * Use specific name of testsuite and testcase
 * Custom hooks

@@ -154,6 +154,8 @@ class PHPLame
         fseek($tmp,0);
         $passed = true;
         $time = 0;
+        $error = '';
+        $count = 0;
 
         // get report of threads: case | pid | time | ms | status | errmsg
         while ( ( list( $mhd, $thd, $tm, $ms, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
@@ -161,15 +163,21 @@ class PHPLame
             if ( $mhd === $method -> name )
             {
                 if ( $st != true ) $passed = false;
+                else $error= $em;
                 $time += $ms;
-                $this -> output[ $name ][ $thd ][] = array(
-                        'ms' => $ms,
-                        'ok' => $st,
-                        'tm' => $tm,
-                        'err' => $em
-                    );
+                $count ++;
             }
         }
+
+        $this -> output[ $name ] = array(
+            'ms' => $time,
+            'avg' => $time / $count,
+            'ok' => $passed,
+            'err' => $error,
+            'description' => array(
+                'lines' => array( $method -> getStartLine(), $method -> getEndLine() )
+            )
+        );
 
         if ( $GLOBALS['SILENT_MODE'] !== true )
         {
@@ -181,11 +189,6 @@ class PHPLame
             else echo PHP_EOL.PHP_EOL;
             echo PHP_EOL;
         }
-
-        $this -> output[ $name ]['description'] = array(
-            'lines' => array( $method -> getStartLine(), $method -> getEndLine() ),
-            'name' => $name,
-        );
 
         fclose($tmp);
         if ( file_exists($meta['uri'])) unlink( $meta['uri'] );

@@ -63,34 +63,21 @@ class PHPLame_JUnit
 
         foreach( $data as $namecase => $case )
         {
-            $time = 0.0;
-            $count = 0;
-            $status = true;
-            $errmsg = false;
-
             $description = $case['description']; unset($case['description']);
-
-            foreach( $case as $thread ) foreach( $thread as $repeat )
-            {
-                $count++;
-                $time += $repeat['ms'];
-                if ( $status != false ) $status = $repeat['ok'];
-                if ( empty($errmsg) ) $errmsg = $repeat['err'];
-            }
 
             $testcase = $this -> testcase( $child, array(
                 'name' =>  $namecase,
                 'classname' => $name,
-                'time' => sprintf( '%0.6f', $GLOBALS['AVERAGE_MODE'] === true ? $time / $count : $time ),
-                'status' => $status,
+                'time' => sprintf( '%0.6f', $GLOBALS['AVERAGE_MODE'] === true ? $case['avg'] : $case['ms'] ),
+                'status' => $case['ok'],
                 'line' => $description['lines'][0],
             ));
 
-            if ( !$status ) $faild ++;
-                $tests ++; $duration += $time / $count;
+            if ( !$case['ok'] ) $faild ++;
+                $tests ++; $duration += $case['ms'] ;
 
-            if ( !empty( $errmsg ) )
-                $this -> section( $testcase, 'error', array( 'message' =>  $errmsg ));
+            if ( !empty( $case['err'] ) )
+                $this -> section( $testcase, 'error', array( 'message' =>  $case['err']  ));
         }
 
         $this -> attribute( $child, 'name', $name );

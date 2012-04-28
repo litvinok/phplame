@@ -172,7 +172,10 @@ class PHPLameSuite
     {
         if ( isset($this -> options['junit']) && !file_exists( $this -> options['junit'] ) )
         {
-            $this -> error( "Can't find directory for JUnit reports" );
+            if ( mkdir( $this -> options['junit'] ) !== true )
+            {
+                $this -> error( "Can't find directory for JUnit reports" );
+            }
         }
     }
 

@@ -42,10 +42,10 @@ class PHPLame
                 'usleep' => 0,
                 'before' => false,
                 'after' => false,
-                'beforeThread' => false,
-                'afterThread' => false,
-                'beforeCase' => false,
-                'afterCase' => false,
+                'beforethread' => false,
+                'afterthread' => false,
+                'beforecase' => false,
+                'aftercase' => false,
             );
 
             if ( strlen($comment) !== FALSE )
@@ -128,7 +128,7 @@ class PHPLame
         }
 
         $this -> beforeCase(); // hook before case
-        if ( $params['beforeCase'] != false ) call_user_func_array( array($this, $params['beforeCase']), array());
+        if ( $params['beforecase'] != false ) call_user_func_array( array($this, $params['beforecase']), array());
 
         if ( (int)$params['thread'] <= 1 )
         {
@@ -148,7 +148,7 @@ class PHPLame
             while ( $waits --> 0) pcntl_wait($status);
         }
 
-        if ( $params['afterCase'] != false ) call_user_func_array( array($this, $params['afterCase']), array());
+        if ( $params['aftercase'] != false ) call_user_func_array( array($this, $params['aftercase']), array());
         $this -> afterCase(); // hook after case
 
         fseek($tmp,0);
@@ -204,7 +204,7 @@ class PHPLame
     private function thread( &$method, &$hander, $count = 1, $ms = 0, &$params )
     {
         $this -> beforeThread(); // hook before thread
-        if ( $params['beforeThread'] != false ) call_user_func_array( array($this, $params['beforeThread']), array());
+        if ( $params['beforethread'] != false ) call_user_func_array( array($this, $params['beforethread']), array());
 
         for( $repeat=0; $repeat < $count; $repeat++ ) // for repeat
         {
@@ -244,7 +244,7 @@ class PHPLame
 
         } // forend repeat
 
-        if ( $params['afterThread'] != false ) call_user_func_array( array($this, $params['afterThread']), array());
+        if ( $params['afterthread'] != false ) call_user_func_array( array($this, $params['afterthread']), array());
         $this -> afterThread(); // hook after thread
     }
 

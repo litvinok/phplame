@@ -26,12 +26,12 @@ class PHPLame
         if ( $GLOBALS['NOCOLOR_MODE'] !== true )
         {
             $this -> color = array(
-                'name' => "%s",
+                'name' => "* \033[1;32m[%s]\033[0m %s",
                 'pass' => "\033[1;32m%s\033[0m",
                 'fail' => "\033[1;41m%s\033[0m",
             );
         }
-        else $this -> color = array( 'name' => "%s", 'pass' => "%s", 'fail' => "%s" );
+        else $this -> color = array( 'name' => "[%s] %s", 'pass' => "%s", 'fail' => "%s" );
 
         foreach ( $class -> getMethods() as $method ) // for case
         {
@@ -122,7 +122,7 @@ class PHPLame
 
         if ( $GLOBALS['SILENT_MODE'] !== true )
         {
-            printf( $this -> color['name'], "* $name" );
+            printf( $this -> color['name'], date('d M Y T H:i:s'), $name );
             if ( $GLOBALS['VERBOSE_MODE'] !== true ) echo ' .. ';
             else echo ':'. PHP_EOL;
         }

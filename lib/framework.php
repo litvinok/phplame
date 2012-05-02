@@ -69,8 +69,8 @@ class PHPLame
                     $tags = array_flip( spliti(',', $params['tags']) );
                     foreach( spliti(',', $options['tags']) as $tag )
                     {
-                        if ( strpos( $tag, '!' ) === 0 && !isset($tags[$tag]) ) $accept = true;
-                        elseif ( strpos( $tag, '!' ) !== 0 && isset($tags[$tag]) ) $accept = true;
+                        if ( strpos( $tag, '~' ) === 0 && !isset($tags[$tag]) ) $accept = true;
+                        elseif ( strpos( $tag, '~' ) !== 0 && isset($tags[$tag]) ) $accept = true;
                     }
                 }
 

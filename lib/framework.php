@@ -74,6 +74,8 @@ class PHPLame
                     }
                 }
 
+                if ( isset($params['disabled']) && $params['disabled'] !== 'false' ) $accept = false;
+
                 if ( $accept )
                 {
                     $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;

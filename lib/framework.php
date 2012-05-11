@@ -217,7 +217,7 @@ class PHPLame
             $this -> before(); // hook before case
             if ( $params['before'] != false ) call_user_func_array( array($this, $params['before']), array());
 
-            $usage[0] = getrusage(2);
+            $usage[0] = getrusage();
             $time = microtime( true );
             $exception = false;
             $return = null;
@@ -233,7 +233,7 @@ class PHPLame
                 $this -> pretty( false );
             }
 
-            $usage[1] = getrusage(2);
+            $usage[1] = getrusage();
             $systime = floatval( $usage[1]['ru_stime.tv_sec']. '.' .$usage[1]['ru_stime.tv_usec'] )
                      - floatval( $usage[0]['ru_stime.tv_sec']. '.' .$usage[0]['ru_stime.tv_usec'] );
 

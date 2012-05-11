@@ -18,6 +18,7 @@ Options
     --verbose       Show status for each testcase
     --nocolor       Disallow colored bash
     --average       Enable average time for casetest of report (default: false)
+    --time          Source time for check. May be user, sys or real as default
 
 Features
 ------------

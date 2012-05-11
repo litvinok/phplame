@@ -40,6 +40,9 @@ class PHPLameSuite
         $GLOBALS['AVERAGE_MODE'] = isset($argv['average']) ? true : false;
         $GLOBALS['NOCOLOR_MODE'] = isset($argv['nocolor']) ? true : false;
 
+        $GLOBALS['TIME_SPEC_USER'] = isset($argv['time']) && preg_match('/(real|user|sys)/i', $argv['time']) ?
+            strtolower(trim($argv['time'])) : 'real';
+
         $this -> check();
         $this -> before();
 

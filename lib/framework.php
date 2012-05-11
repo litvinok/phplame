@@ -155,25 +155,27 @@ class PHPLame
 
         fseek($tmp,0);
         $passed = true;
-        $time = 0;
+        $time = array( 'real' => 0, 'user' => 0, 'sys' => 0 );
         $error = '';
         $count = 0;
 
-        // get report of threads: case | pid | time | ms | status | errmsg
-        while ( ( list( $mhd, $thd, $tm, $ms, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
+        // get report of threads: case | pid | time | rtime | utime | stime | status | errmsg
+        while ( ( list( $mhd, $thd, $tm, $rtm, $utm, $stm, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
         {
             if ( $mhd === $method -> name )
             {
                 if ( $st != true ) $passed = false;
                 else $error= $em;
-                $time += $ms;
+                $time['real'] += $rtm;
+                $time['user'] += $utm;
+                $time['sys'] += $stm;
                 $count ++;
             }
         }
 
         $this -> output[ $name ] = array(
-            'ms' => $time,
-            'avg' => $time / $count,
+            'time' => $time,
+            'count' => $count,
             'ok' => $passed,
             'err' => $error,
             'description' => array(
@@ -215,6 +217,7 @@ class PHPLame
             $this -> before(); // hook before case
             if ( $params['before'] != false ) call_user_func_array( array($this, $params['before']), array());
 
+            $usage[0] = getrusage(2);
             $time = microtime( true );
             $exception = false;
             $return = null;
@@ -230,13 +233,24 @@ class PHPLame
                 $this -> pretty( false );
             }
 
+            $usage[1] = getrusage(2);
+            $systime = floatval( $usage[1]['ru_stime.tv_sec']. '.' .$usage[1]['ru_stime.tv_usec'] )
+                     - floatval( $usage[0]['ru_stime.tv_sec']. '.' .$usage[0]['ru_stime.tv_usec'] );
+
+            $usrtime = floatval( $usage[1]['ru_utime.tv_sec']. '.' .$usage[1]['ru_utime.tv_usec'] )
+                     - floatval( $usage[0]['ru_utime.tv_sec']. '.' .$usage[0]['ru_utime.tv_usec'] );
+
+            unset( $usage );
+
             fwrite($hander, sprintf (
-                // case | pid | time | ms | status | errmsg
-                "%s\t%d\t%0.6f\t%0.6f\t%b\t%s\n",
+                // case | pid | time | rtime | utime | stime | status | errmsg
+                "%s\t%d\t%0.6f\t%0.6f\t%0.6f\t%0.6f\t%b\t%s\n",
                 $method -> name,
                 getmypid(),
                 $time,
                 microtime( true ) - $time,
+                $usrtime,
+                $systime,
                 $exception === false,
                 $exception !== false ? $exception : ''
             ));

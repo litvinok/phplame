@@ -56,34 +56,35 @@ class PHPLame_JUnit
     function testsuite( $parent, $name, $data )
     {
         $child = $this -> document -> createElement( 'testsuite' );
-
-        $duration = 0.0;
-        $tests = 0;
-        $faild = 0;
+        $suite = array( 'time' => 0.0, 'errors' => 0, 'tests' => 0 );
 
         foreach( $data as $namecase => $case )
         {
             $description = $case['description']; unset($case['description']);
+            $duration = $case['time'][ $GLOBALS['TIME_SPEC_USER'] ];
+            $time = $GLOBALS['AVERAGE_MODE'] === true ? $duration / $case['count'] : $duration;
 
             $testcase = $this -> testcase( $child, array(
                 'name' =>  $namecase,
                 'classname' => $name,
-                'time' => sprintf( '%0.6f', $GLOBALS['AVERAGE_MODE'] === true ? $case['avg'] : $case['ms'] ),
+                'time' => number_format( $time, 6),
                 'status' => $case['ok'],
                 'line' => $description['lines'][0],
             ));
 
-            if ( !$case['ok'] ) $faild ++;
-                $tests ++; $duration += $case['ms'] ;
+            if ( !$case['ok'] )
+                $suite['errors'] ++;
+                $suite['time'] += $duration;
+                $suite['tests'] ++;
 
             if ( !empty( $case['err'] ) )
                 $this -> section( $testcase, 'error', array( 'message' =>  $case['err']  ));
         }
 
         $this -> attribute( $child, 'name', $name );
-        $this -> attribute( $child, 'tests', $tests );
-        $this -> attribute( $child, 'errors', $faild );
-        $this -> attribute( $child, 'time', sprintf( '%0.6f', $duration ) );
+        $this -> attribute( $child, 'tests', $suite['tests'] );
+        $this -> attribute( $child, 'errors', $suite['errors'] );
+        $this -> attribute( $child, 'time', number_format( $suite['time'], 6) );
 
         $parent -> appendChild( $child );
     }

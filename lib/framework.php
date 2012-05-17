@@ -234,11 +234,12 @@ class PHPLame
             }
 
             $usage[1] = getrusage();
-            $systime = floatval( $usage[1]['ru_stime.tv_sec']. '.' .$usage[1]['ru_stime.tv_usec'] )
-                     - floatval( $usage[0]['ru_stime.tv_sec']. '.' .$usage[0]['ru_stime.tv_usec'] );
 
-            $usrtime = floatval( $usage[1]['ru_utime.tv_sec']. '.' .$usage[1]['ru_utime.tv_usec'] )
-                     - floatval( $usage[0]['ru_utime.tv_sec']. '.' .$usage[0]['ru_utime.tv_usec'] );
+            $systime = (( $usage[1]['ru_stime.tv_sec']*1e6 + $usage[1]['ru_stime.tv_usec']) / 1000000 )
+                     - (( $usage[0]['ru_stime.tv_sec']*1e6 + $usage[0]['ru_stime.tv_usec']) / 1000000 );
+
+            $usrtime = (( $usage[1]['ru_utime.tv_sec']*1e6 + $usage[1]['ru_utime.tv_usec']) / 1000000 )
+                     - (( $usage[0]['ru_utime.tv_sec']*1e6 + $usage[0]['ru_utime.tv_usec']) / 1000000 );
 
             unset( $usage );
 

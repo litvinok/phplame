@@ -102,6 +102,12 @@ class PHPLameSuite
             $report -> document -> save( $this -> options['junit']."/TEST-$class.xml" );
         }
 
+        if ( isset( $this -> options['json']) && !empty($this -> options['json']) )
+        {
+            $report = new PHPLame_JSON( $class, $params, $output );
+            $report -> save( $this -> options['json']."/$class.json" );
+        }
+
         if ( isset($this -> options['debug']) )
         {
             echo PHP_EOL; print_r($output);

@@ -15,6 +15,7 @@ function phplame_autoload( $class = null )
             'phplame' => '/framework.php',
             'phplamesuite' => '/suite.php',
             'phplame_junit' => '/Reports/junit.php',
+            'phplame_json' => '/Reports/json.php',
         );
         $path = dirname(__FILE__);
     }

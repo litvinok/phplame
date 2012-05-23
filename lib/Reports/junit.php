@@ -61,7 +61,7 @@ class PHPLame_JUnit
         foreach( $data as $namecase => $case )
         {
             $description = $case['description']; unset($case['description']);
-            $duration = $case['time'][ $GLOBALS['TIME_SPEC_USER'] ];
+            $duration = $case['time'][ $GLOBALS['TIME_SPEC_USER'] ]['total'];
             $time = $GLOBALS['AVERAGE_MODE'] === true ? $duration / $case['count'] : $duration;
 
             $testcase = $this -> testcase( $child, array(

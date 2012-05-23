@@ -11,6 +11,7 @@ Usage
 Options
 ------------
     --junit         Path to JUnit reports.
+    --json          Path to JSON reports
     --tags          Tags for select testcases
     --bootstrap     Bootstrap file
     --debug         Debug mode, print result to STDOUT
@@ -32,3 +33,5 @@ Example
 ------------
 
     $ phplame/phplame --junit=reports/ --tags=aa --silent=true --average=true examples/
+
+    $ phplame/phplame --json=reports/ --time=user examples/

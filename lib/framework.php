@@ -154,47 +154,84 @@ class PHPLame
         $this -> afterCase(); // hook after case
 
         fseek($tmp,0);
-        $passed = true;
-        $time = array( 'real' => 0, 'user' => 0, 'sys' => 0 );
-        $error = '';
-        $count = 0;
+
+        $template_time = array
+        (
+            'total' => 0,
+            'percent' => array(),
+            'invocations' => array(),
+        );
+
+        $status = array
+        (
+            'ok' => true,
+            'err' => '',
+            'count' => 0,
+            'time' => array( 'real' => $template_time, 'user' => $template_time, 'sys' => $template_time ),
+            'description' => array( 'lines' => array( $method -> getStartLine(), $method -> getEndLine() )
+            )
+        );
 
         // get report of threads: case | pid | time | rtime | utime | stime | status | errmsg
         while ( ( list( $mhd, $thd, $tm, $rtm, $utm, $stm, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
         {
             if ( $mhd === $method -> name )
             {
-                if ( $st != true ) $passed = false;
-                else $error= $em;
-                $time['real'] += $rtm;
-                $time['user'] += $utm;
-                $time['sys'] += $stm;
-                $count ++;
+                if ( $st != true ) $status['ok'] = false;
+                elseif( !empty($em) ) $status['err'] = $em;
+
+                $status['count'] ++;
+
+                foreach( array( 'real' => $rtm, 'user' => $utm, 'sys' => $stm ) as $what => $tm )
+                {
+                    $ref = &$status['time'][ $what ];
+
+                    $ref['invocations'][] = $tm;
+                    $ref['total'] += $tm;
+
+                    if ( !isset($ref['min']) || $ref['min'] > $tm ) $ref['min'] = $tm;
+                    if ( !isset($ref['max']) || $ref['max'] < $tm ) $ref['max'] = $tm;
+
+                    unset($ref);
+                }
             }
         }
 
-        $this -> output[ $name ] = array(
-            'time' => $time,
-            'count' => $count,
-            'ok' => $passed,
-            'err' => $error,
-            'description' => array(
-                'lines' => array( $method -> getStartLine(), $method -> getEndLine() )
-            )
-        );
+        foreach ( $status['time'] as $key => &$ref )
+        {
+            $ref['avg'] = round( $ref['total'] / $status['count'] );
+            foreach ( array( 10, 50, 90 ) as $percentile )
+            {
+                $targetCount = $percentile * $status['count'] / 100;
+                $ref['percent'][$percentile] = $ref['max'];
+                $count = 0;
+
+                for ($value = $ref['min']; $value <= $ref['max']; $value++ )
+                {
+                    $count += count( array_search( $value, $ref['invocations'], true ) );
+                    if ( $count >= $targetCount ) { $ref['percent'][$percentile] = $value; break; }
+                }
+                $ref['percent'][$percentile] /= 1000000;
+            }
+
+            foreach( array( 'avg', 'min', 'max', 'total' ) as $e ) $ref[$e] /= 1000000;
+            unset($ref['invocations']);
+        }
+
+        $this -> output[ $name ] = $status;
 
         if ( $GLOBALS['SILENT_MODE'] !== true )
         {
             if ( $GLOBALS['VERBOSE_MODE'] !== true )
             {
-                if ( $passed ) printf( $this -> color['pass'], "ok" );
+                if ( $status['ok'] ) printf( $this -> color['pass'], "ok" );
                 else printf( $this -> color['fail'], "error" );
             }
             else echo PHP_EOL.PHP_EOL;
             echo PHP_EOL;
         }
 
-        fclose($tmp);
+        unset($status); fclose($tmp);
         if ( file_exists($meta['uri'])) unlink( $meta['uri'] );
     }
 
@@ -235,21 +272,21 @@ class PHPLame
 
             $usage[1] = getrusage();
 
-            $systime = (( $usage[1]['ru_stime.tv_sec']*1e6 + $usage[1]['ru_stime.tv_usec']) / 1000000 )
-                     - (( $usage[0]['ru_stime.tv_sec']*1e6 + $usage[0]['ru_stime.tv_usec']) / 1000000 );
+            $systime = ( $usage[1]['ru_stime.tv_sec']*1e6 + $usage[1]['ru_stime.tv_usec'] )
+                     - ( $usage[0]['ru_stime.tv_sec']*1e6 + $usage[0]['ru_stime.tv_usec'] );
 
-            $usrtime = (( $usage[1]['ru_utime.tv_sec']*1e6 + $usage[1]['ru_utime.tv_usec']) / 1000000 )
-                     - (( $usage[0]['ru_utime.tv_sec']*1e6 + $usage[0]['ru_utime.tv_usec']) / 1000000 );
+            $usrtime = ( $usage[1]['ru_utime.tv_sec']*1e6 + $usage[1]['ru_utime.tv_usec'] )
+                     - ( $usage[0]['ru_utime.tv_sec']*1e6 + $usage[0]['ru_utime.tv_usec'] );
 
             unset( $usage );
 
             fwrite($hander, sprintf (
                 // case | pid | time | rtime | utime | stime | status | errmsg
-                "%s\t%d\t%0.6f\t%0.6f\t%0.6f\t%0.6f\t%b\t%s\n",
+                "%s\t%d\t%d\t%d\t%d\t%d\t%b\t%s\n",
                 $method -> name,
                 getmypid(),
                 $time,
-                microtime( true ) - $time,
+                ( microtime( true ) - $time ) * 1000000,
                 $usrtime,
                 $systime,
                 $exception === false,

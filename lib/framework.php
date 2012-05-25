@@ -37,6 +37,7 @@ class PHPLame
         {
             $comment = $method -> getDocComment();
             $params = array(
+                'invocation' => 1,
                 'repeat' => 1,
                 'thread' => 1,
                 'usleep' => 0,
@@ -134,7 +135,7 @@ class PHPLame
 
         if ( (int)$params['thread'] <= 1 )
         {
-            $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'], $params );
+            $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['usleep'], $params );
         }
         else
         {
@@ -143,7 +144,7 @@ class PHPLame
             {
                 if ( !pcntl_fork() ) // child
                 {
-                    $this -> thread( $method, $tmp, (int)$params['repeat'], (int)$params['usleep'], $params );
+                    $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['usleep'], $params );
                     exit;
                 }
             }
@@ -242,26 +243,27 @@ class PHPLame
      * @param  object  $hander
      * @param  integer $count
      */
-    private function thread( &$method, &$hander, $count = 1, $ms = 0, &$params )
+    private function thread( &$method, &$hander, $count = 1, $repeats = 1, $ms = 0, &$params )
     {
         $this -> beforeThread(); // hook before thread
         if ( $params['beforethread'] != false ) call_user_func_array( array($this, $params['beforethread']), array());
 
-        for( $repeat=0; $repeat < $count; $repeat++ ) // for repeat
+        for( $invocation=0; $invocation < $count; $invocation++ ) // for invocation
         {
             if ( $ms > 0 ) usleep( $ms ); // Delays execution (ms)
 
             $this -> before(); // hook before case
             if ( $params['before'] != false ) call_user_func_array( array($this, $params['before']), array());
 
-            $usage[0] = getrusage();
-            $time = microtime( true );
+            $repeat = $repeats;
             $exception = false;
             $return = null;
+            $usage[0] = getrusage();
+            $time = microtime( true );
 
             try
             {
-                $method -> invoke( $this, array() );
+                while( $repeat --> 0 ) $method -> invoke( $this, array() );
                 $this -> pretty();
             }
             catch ( Exception $e )
@@ -296,7 +298,7 @@ class PHPLame
             if ( $params['after'] != false ) call_user_func_array( array($this, $params['after']), array());
             $this -> after(); // hook after case
 
-        } // forend repeat
+        } // forend invocation
 
         if ( $params['afterthread'] != false ) call_user_func_array( array($this, $params['afterthread']), array());
         $this -> afterThread(); // hook after thread

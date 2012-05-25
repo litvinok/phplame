@@ -12,6 +12,7 @@ class example_1 extends PHPLame
     /**
      * @test: a
      * @repeat: 3
+     * @invocation: 2
      * @thread: 2
      * @tags: a, aa
      * @before: before_case_one

@@ -20,6 +20,7 @@ Options
     --nocolor       Disallow colored bash
     --average       Enable average time for casetest of report (default: false)
     --time          Source time for check. May be user, sys or real as default
+    -c | --config   Load settings from config file (json-formatted)
 
 Features
 ------------

@@ -9,15 +9,30 @@ define( 'PHPLAME_VERSION', 'dev' );
 
 require_once( PHPLAME_HOME.'/lib/autoload.php' );
 
-new PHPLameSuite( array_pop($argv), getopt('', array(
-    'junit::',
-    'json::',
-    'tags::',
-    'bootstrap::',
-    'debug:',
-    'silent:',
-    'verbose:',
-    'nocolor:',
-    'average:',
-    'time:'
-)));
+// Get user options
+$options_config = array();
+$options_user = getopt('c:', array(
+               'junit::',
+               'json::',
+               'tags::',
+               'bootstrap::',
+               'debug:',
+               'silent:',
+               'verbose:',
+               'nocolor:',
+               'average:',
+               'time:',
+               'config:'
+));
+
+
+// Prepare config file name for parse it
+if ( is_set($options_user['c']) ) $file_config = $options_user['c'];
+elseif ( is_set($options_user['config']) ) $file_config = $options_user['config'];
+else $file_config = './phplame.json';
+
+// Parse config
+if ( is_file($file_config) ) $options_config = json_decode( file_get_contents( $file_config ), true );
+
+// Start tests
+new PHPLameSuite( array_pop($argv), array_merge( $options_user, $options_config ) );

@@ -6,10 +6,21 @@
  */
 class PHPLameConsole
 {
+    /**
+     * @var array global options
+     */
     private static $options;
 
+    /**
+     * @var string default name config-files
+     */
     private static $config_name;
 
+    /**
+     * @param $config_name
+     * @param $opt_short
+     * @param $opt_long
+     */
     function __construct( $config_name, $opt_short, $opt_long )
     {
         self::$config_name = $config_name;
@@ -22,6 +33,13 @@ class PHPLameConsole
         $this -> execute();
     }
 
+    /**
+     * Load and parse json-formatted config-file
+     *
+     * @param $storage
+     * @param $path
+     * @throws Exception
+     */
     private function load_json_config( &$storage, $path )
     {
         if ( file_exists($path) && is_file($path) )
@@ -32,6 +50,9 @@ class PHPLameConsole
         }
     }
 
+    /**
+     * Run tests
+     */
     private function execute()
     {
         foreach( $this -> get_basedir() as $basedir )
@@ -46,6 +67,11 @@ class PHPLameConsole
         }
     }
 
+    /**
+     * Return list of test directories/files
+     *
+     * @return array
+     */
     private function get_basedir()
     {
         global $argv;

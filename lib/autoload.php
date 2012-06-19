@@ -14,6 +14,7 @@ function phplame_autoload( $class = null )
         $classes = array(
             'phplame' => '/framework.php',
             'phplamesuite' => '/suite.php',
+            'phplameconsole' => '/console.php',
             'phplame_junit' => '/Reports/junit.php',
             'phplame_json' => '/Reports/json.php',
         );

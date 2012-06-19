@@ -29,7 +29,6 @@ class PHPLameSuite
      */
     function __construct( $base = '.', $argv = array() )
     {
-
         $this -> base = $base;
         $this -> options = $argv;
 

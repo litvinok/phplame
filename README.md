@@ -36,3 +36,14 @@ Example
     $ phplame/phplame --junit=reports/ --tags=aa --silent=true --average=true examples/
 
     $ phplame/phplame --json=reports/ --time=user examples/
+
+    $ phplame/phplame -c=simple001.json
+
+Example Config
+------------
+    {
+        "bootstrap" : "bootstrap.php",
+        "json" : "reports",
+        "time" : "sys",
+        "basedir" : [ "tests/01", "tests/02" ]
+    }

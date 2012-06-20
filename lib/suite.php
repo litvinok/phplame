@@ -75,7 +75,7 @@ class PHPLameSuite
                 $this -> report( $class, $params, $testcase -> output );
                 $this -> resume[] = "class $class :: $file";
 
-                unset($testcase); gc_collect_cycles();
+                unset($testcase);  if ( function_exists('gc_collect_cycles')) gc_collect_cycles();
             }
             catch( Exception $e )
             {

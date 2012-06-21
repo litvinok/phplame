@@ -17,12 +17,16 @@ class PHPLameConsole
     private static $config_name;
 
     /**
+     * Construct class
+     *
      * @param $config_name
      * @param $opt_short
      * @param $opt_long
      */
     function __construct( $config_name, $opt_short, $opt_long )
     {
+        PHPLameCollector::enable();
+
         self::$config_name = $config_name;
         self::$options = getopt( $opt_short, explode(' ', $opt_long));
         $opt = &self::$options;
@@ -31,6 +35,18 @@ class PHPLameConsole
 
         $this -> load_json_config( $opt, $config_path );
         $this -> execute();
+
+        PHPLameCollector::disable();
+    }
+
+    /**
+     * Destruct class
+     */
+    function __destruct()
+    {
+        unset($this -> config_name );
+        unset($this -> options );
+        PHPLameCollector::clean();
     }
 
     /**
@@ -63,7 +79,7 @@ class PHPLameConsole
 
             $suite = new PHPLameSuite( $basedir, $opt );
 
-            unset($suite);
+            unset($suite); PHPLameCollector::clean();
         }
     }
 

@@ -33,6 +33,15 @@ class PHPLame_JUnit
     }
 
     /**
+     * Destruct class
+     */
+    function __destruct()
+    {
+        unset($this -> document );
+        PHPLameCollector::clean();
+    }
+
+    /**
      * Add atribute by node
      *
      * @param  object   $parent

@@ -61,6 +61,17 @@ class PHPLameSuite
     }
 
     /**
+     * Destruct class
+     */
+    function __destruct()
+    {
+        unset($this -> base);
+        unset($this -> resume );
+        unset($this -> options );
+        PHPLameCollector::clean();
+    }
+
+    /**
      * Initialize class and get result testcase
      *
      * @param string $file
@@ -75,7 +86,7 @@ class PHPLameSuite
                 $this -> report( $class, $params, $testcase -> output );
                 $this -> resume[] = "class $class :: $file";
 
-                unset($testcase);  if ( function_exists('gc_collect_cycles')) gc_collect_cycles();
+                unset($testcase);  PHPLameCollector::clean();
             }
             catch( Exception $e )
             {

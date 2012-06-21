@@ -90,8 +90,22 @@ class PHPLame
         }
 
         $this -> beforeClass(); // hook before class
-        foreach ( $cases as $ref ) $this -> cases($ref['name'], $ref['method'], $ref['params']);
+        foreach ( $cases as $ref )
+        {
+            PHPLameCollector::clean();
+            $this -> cases($ref['name'], $ref['method'], $ref['params']);
+        }
         $this -> afterClass(); // hook after class
+    }
+
+    /**
+     * Destruct class
+     */
+    function __destruct()
+    {
+        unset($this -> output);
+        unset($this -> color );
+        PHPLameCollector::clean();
     }
 
     /**
@@ -265,7 +279,11 @@ class PHPLame
 
             try
             {
-                while( $repeat --> 0 ) $method -> invoke( $this, array() );
+                while( $repeat --> 0 )
+                {
+                    PHPLameCollector::clean();
+                    $method -> invoke( $this, array() );
+                }
                 $this -> pretty();
             }
             catch ( Exception $e )

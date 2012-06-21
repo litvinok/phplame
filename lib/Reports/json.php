@@ -37,6 +37,21 @@ class PHPLame_JSON
             );
         }
     }
+
+    /**
+     * Destruct class
+     */
+    function __destruct()
+    {
+        unset($this -> document );
+        PHPLameCollector::clean();
+    }
+
+    /**
+     * Save JSON
+     *
+     * @param $file
+     */
     public function save( $file )
     {
         file_put_contents( $file, json_encode($this -> document) );

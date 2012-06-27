@@ -3,7 +3,7 @@
  * Example test with use library PHPLame
  * Take look to keyword @suite, @test, etc.
  *
- * @suite: Example test
+ * @suite: TDD PHPLame
  */
 class Tests extends PHPLame
 {

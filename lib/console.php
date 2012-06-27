@@ -44,8 +44,6 @@ class PHPLameConsole
      */
     function __destruct()
     {
-        unset(self::$config_name );
-        unset(self::$options );
         PHPLameCollector::clean();
     }
 

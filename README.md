@@ -1,3 +1,5 @@
+ ([![Master Build Status](https://secure.travis-ci.org/litvinok/phplame.png?branch=master)](http://travis-ci.org/litvinok/phplam))
+
 Installation
 ------------
 

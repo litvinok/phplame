@@ -40,6 +40,8 @@ class PHPLame
                 'invocation' => 1,
                 'repeat' => 1,
                 'thread' => 1,
+                'duration' => 0,
+                'warmup' => 0,
                 'usleep' => 0,
                 'before' => false,
                 'after' => false,
@@ -151,7 +153,7 @@ class PHPLame
 
         if ( (int)$params['thread'] <= 1 )
         {
-            $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['usleep'], $params );
+            $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['duration'], (int)$params['usleep'], $params );
         }
         else
         {
@@ -160,7 +162,7 @@ class PHPLame
             {
                 if ( !pcntl_fork() ) // child
                 {
-                    $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['usleep'], $params );
+                    $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['duration'], (int)$params['usleep'], $params );
                     exit;
                 }
             }
@@ -259,13 +261,14 @@ class PHPLame
      * @param  object  $hander
      * @param  integer $count
      */
-    private function thread( &$method, &$hander, $count = 1, $repeats = 1, $ms = 0, &$params )
+    private function thread( &$method, &$hander, $count = 1, $repeats = 1, $duration = 0, $ms = 0, &$params )
     {
         $this -> beforeThread(); // hook before thread
         if ( $params['beforethread'] != false ) call_user_func_array( array($this, $params['beforethread']), array());
 
         for( $invocation=0; $invocation < $count; $invocation++ ) // for invocation
         {
+            PHPLameCollector::clean(); // gc clean
             if ( $ms > 0 ) usleep( $ms ); // Delays execution (ms)
 
             $this -> before(); // hook before case
@@ -279,11 +282,7 @@ class PHPLame
 
             try
             {
-                while( $repeat --> 0 )
-                {
-                    PHPLameCollector::clean();
-                    $method -> invoke( $this, array() );
-                }
+                while( $repeat --> 0 ) $method -> invoke( $this, array() );
                 $this -> pretty();
             }
             catch ( Exception $e )

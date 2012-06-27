@@ -1,4 +1,6 @@
 {
     "time" : "user",
-    "basedir" : "example"
+    "basedir" : "tests",
+    "json": ".",
+    "junit": "."
 }

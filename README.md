@@ -1,9 +1,9 @@
- ([![Master Build Status](https://secure.travis-ci.org/litvinok/phplame.png?branch=master)](http://travis-ci.org/litvinok/phplam))
-
 Installation
 ------------
 
 At this moment is clone from git.
+
+Brunch master: [![Master Build Status](https://secure.travis-ci.org/litvinok/phplame.png?branch=master)](http://travis-ci.org/litvinok/phplam)
 
 Usage
 ------------

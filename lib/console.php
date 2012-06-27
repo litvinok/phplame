@@ -28,7 +28,7 @@ class PHPLameConsole
         PHPLameCollector::enable();
 
         self::$config_name = $config_name;
-        self::$options = getopt( $opt_short, explode(' ', $opt_long));
+        self::$options = PHP_VERSION_ID < 50300 ? getopt( $opt_short ) : getopt( $opt_short, explode(' ', $opt_long));
         $opt = &self::$options;
 
         $config_path = isset($opt['c']) ? $opt['c'] : ( isset($opt['config']) ? $opt['config'] : './'. $config_name );
@@ -44,8 +44,8 @@ class PHPLameConsole
      */
     function __destruct()
     {
-        unset($this -> config_name );
-        unset($this -> options );
+        unset(self::$config_name );
+        unset(self::$options );
         PHPLameCollector::clean();
     }
 

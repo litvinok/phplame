@@ -17,7 +17,7 @@ class PHPLame
      */
     private $color;
 
-    function __construct( $options = array(), $class_options = array() )
+    function __construct( $options = array(), &$class_options = array() )
     {
         $class = new ReflectionClass( $this );
         $cases = array();

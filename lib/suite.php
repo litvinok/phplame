@@ -82,7 +82,7 @@ class PHPLameSuite
         {
             try
             {
-                $testcase = new $class( $this -> options, &$params );
+                $testcase = new $class( $this -> options, $params );
                 $this -> report( $class, $params, $testcase -> output );
                 $this -> resume[] = "class $class :: $file";
 

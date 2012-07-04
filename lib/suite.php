@@ -82,7 +82,7 @@ class PHPLameSuite
         {
             try
             {
-                $testcase = new $class( $this -> options );
+                $testcase = new $class( $this -> options, &$params );
                 $this -> report( $class, $params, $testcase -> output );
                 $this -> resume[] = "class $class :: $file";
 
@@ -140,7 +140,7 @@ class PHPLameSuite
                 if ( $file!= "." && $file != ".." && ( $target = sprintf( "%s/%s", $dir, $file) ) )
                 {
                     if ( is_dir($target) ) $files = array_merge( $files, $this -> scandir( $target ));
-                    else $files[] = $target;
+                    elseif ( preg_match('/\.(php[tb54]?|phtml|inc|phplame)$/', $file) ) $files[] = $target;
                 }
             }
             closedir($handle);

@@ -17,7 +17,7 @@ class PHPLame
      */
     private $color;
 
-    function __construct( $options = array() )
+    function __construct( $options = array(), $class_options = array() )
     {
         $class = new ReflectionClass( $this );
         $cases = array();
@@ -36,20 +36,7 @@ class PHPLame
         foreach ( $class -> getMethods() as $method ) // for case
         {
             $comment = $method -> getDocComment();
-            $params = array(
-                'invocation' => 1,
-                'repeat' => 1,
-                'thread' => 1,
-                'duration' => 0,
-                'warmup' => 0,
-                'usleep' => 0,
-                'before' => false,
-                'after' => false,
-                'beforethread' => false,
-                'afterthread' => false,
-                'beforecase' => false,
-                'aftercase' => false,
-            );
+            $params = array();
 
             if ( strlen($comment) !== FALSE )
             {
@@ -83,7 +70,25 @@ class PHPLame
 
                 if ( $accept )
                 {
+                    $template = array(
+                        'invocations' => 1,
+                        'repeats' => 1,
+                        'threads' => 1,
+                        'duration' => 0,
+                        'warmup' => 0,
+                        'usleep' => 0,
+                        'before' => false,
+                        'after' => false,
+                        'beforethread' => false,
+                        'afterthread' => false,
+                        'beforecase' => false,
+                        'aftercase' => false,
+                    );
+
                     $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;
+                    $this -> load_params( &$template, &$options, $class_options["suite"], $casename );
+                    $params = array_merge($template, $params);
+
                     $cases[ $method -> name ]['name'] = $casename;
                     $cases[ $method -> name ]['method'] = $method;
                     $cases[ $method -> name ]['params'] = $params;
@@ -108,6 +113,35 @@ class PHPLame
         unset($this -> output);
         unset($this -> color );
         PHPLameCollector::clean();
+    }
+
+    /**
+     * Load custom params for each testcase
+     *
+     * @param $setParams
+     * @param $getParams
+     * @param string $className
+     * @param string $methodName
+     */
+    private function load_params( &$setParams, &$getParams, $className = null, $methodName = null )
+    {
+        // Load default section
+        if ( isset( $getParams["default"] ) && is_array( $getParams["default"] ) )
+        {
+            $setParams = array_merge( $setParams, $getParams["default"] );
+        }
+
+        // Load params for class method
+        if ( empty($className) && isset( $getParams[ $methodName ] ) )
+        {
+            $setParams = array_merge( $setParams, $getParams[ $methodName ] );
+        }
+
+        // Load default params for class
+        if ( !empty($className) && isset( $getParams["classes"][ $className ] ) )
+        {
+            $this -> load_params( $setParams, $getParams["classes"][ $className ], null, $methodName );
+        }
     }
 
     /**
@@ -151,18 +185,18 @@ class PHPLame
         $this -> beforeCase(); // hook before case
         if ( $params['beforecase'] != false ) call_user_func_array( array($this, $params['beforecase']), array());
 
-        if ( (int)$params['thread'] <= 1 )
+        if ( (int)$params['threads'] <= 1 )
         {
-            $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['duration'], (int)$params['usleep'], $params );
+            $this -> thread( $method, $tmp, (int)$params['invocations'], (int)$params['repeats'], (int)$params['duration'], (int)$params['usleep'], $params );
         }
         else
         {
-            $threads = $waits = (int)$params['thread'];
+            $threads = $waits = (int)$params['threads'];
             while ( $threads --> 0 )
             {
                 if ( !pcntl_fork() ) // child
                 {
-                    $this -> thread( $method, $tmp, (int)$params['invocation'], (int)$params['repeat'], (int)$params['duration'], (int)$params['usleep'], $params );
+                    $this -> thread( $method, $tmp, (int)$params['invocations'], (int)$params['repeats'], (int)$params['duration'], (int)$params['usleep'], $params );
                     exit;
                 }
             }

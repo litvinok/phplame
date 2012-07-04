@@ -45,5 +45,15 @@ Example Config
         "bootstrap" : "bootstrap.php",
         "json" : "reports",
         "time" : "sys",
-        "basedir" : [ "tests/01", "tests/02" ]
+        "basedir" : [ "tests/01", "tests/02" ],
+
+        "default" : {
+            "invocations" : 100
+        },
+
+        "classes" : {
+            "Tests" : {
+                "Testcase 2" : { "invocation" : 10 }
+            }
+        }
     }

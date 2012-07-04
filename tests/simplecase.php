@@ -12,7 +12,7 @@ class Tests extends PHPLame
 
     /**
      * @test: Testcase 1
-     * @invocation: 100
+     * @invocations: 100
      * @before: clean_count
      */
     public function testcase_1()
@@ -23,7 +23,7 @@ class Tests extends PHPLame
 
     /**
      * @test: Testcase 2
-     * @invocation: 100
+     * @invocations: 100
      * @before: unclean_count
      * @after: clean_count
      */
@@ -35,8 +35,8 @@ class Tests extends PHPLame
 
     /**
      * @test: Testcase 3
-     * @repeat: 100
-     * @invocation: 10
+     * @repeats: 100
+     * @invocations: 10
      * @beforecase: clean_count
      */
     public function testcase_3()
@@ -49,7 +49,7 @@ class Tests extends PHPLame
 
     /**
      * @test: Testcase 4
-     * @invocation: 100
+     * @invocations: 100
      * @beforecase: unclean_count
      * @before: clean_count
      */

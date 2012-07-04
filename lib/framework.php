@@ -86,7 +86,7 @@ class PHPLame
                     );
 
                     $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;
-                    $this -> load_params( &$template, &$options, $class_options["suite"], $casename );
+                    $this -> load_params( $template, $options, $class_options["suite"], $casename );
                     $params = array_merge($template, $params);
 
                     $cases[ $method -> name ]['name'] = $casename;

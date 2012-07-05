@@ -47,6 +47,24 @@ class PHPLame
             if ( strpos( $method -> name, 'test') || isset($params['test']) ) // if case
             {
                 $accept = true;
+                $template = array(
+                    'invocations' => 1,
+                    'repeats' => 1,
+                    'threads' => 1,
+                    'duration' => 0,
+                    'warmup' => 0,
+                    'usleep' => 0,
+                    'before' => false,
+                    'after' => false,
+                    'beforethread' => false,
+                    'afterthread' => false,
+                    'beforecase' => false,
+                    'aftercase' => false,
+                );
+
+                $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;
+                $this -> load_params( $template, $options, $class_options["suite"], $casename );
+                $params = PHPLameUtils::array_merge_assoc($template, $params);
 
                 if ( isset($params['sleep']) && !isset($params['usleep']) )
                 {
@@ -70,25 +88,6 @@ class PHPLame
 
                 if ( $accept )
                 {
-                    $template = array(
-                        'invocations' => 1,
-                        'repeats' => 1,
-                        'threads' => 1,
-                        'duration' => 0,
-                        'warmup' => 0,
-                        'usleep' => 0,
-                        'before' => false,
-                        'after' => false,
-                        'beforethread' => false,
-                        'afterthread' => false,
-                        'beforecase' => false,
-                        'aftercase' => false,
-                    );
-
-                    $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;
-                    $this -> load_params( $template, $options, $class_options["suite"], $casename );
-                    $params = PHPLameUtils::array_merge_assoc($template, $params);
-
                     $cases[ $method -> name ]['name'] = $casename;
                     $cases[ $method -> name ]['method'] = $method;
                     $cases[ $method -> name ]['params'] = $params;

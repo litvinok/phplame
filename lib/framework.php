@@ -87,7 +87,7 @@ class PHPLame
 
                     $casename = isset($params['test']) && strlen($params['test']) ? $params['test'] : $method -> name;
                     $this -> load_params( $template, $options, $class_options["suite"], $casename );
-                    $params = array_merge($template, $params);
+                    $params = PHPLameUtils::array_merge_assoc($template, $params);
 
                     $cases[ $method -> name ]['name'] = $casename;
                     $cases[ $method -> name ]['method'] = $method;
@@ -128,13 +128,13 @@ class PHPLame
         // Load default section
         if ( isset( $getParams["default"] ) && is_array( $getParams["default"] ) )
         {
-            $setParams = array_merge( $setParams, $getParams["default"] );
+            $setParams = PHPLameUtils::array_merge_assoc( $setParams, $getParams["default"] );
         }
 
         // Load params for class method
         if ( empty($className) && isset( $getParams[ $methodName ] ) )
         {
-            $setParams = array_merge( $setParams, $getParams[ $methodName ] );
+            $setParams = PHPLameUtils::array_merge_assoc( $setParams, $getParams[ $methodName ] );
         }
 
         // Load default params for class

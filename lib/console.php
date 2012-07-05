@@ -30,7 +30,6 @@ class PHPLameConsole
         self::$config_name = $config_name;
         self::$options = PHP_VERSION_ID < 50300 ? getopt( $opt_short ) : getopt( $opt_short, explode(' ', $opt_long));
         $opt = &self::$options;
-
         $config_path = isset($opt['c']) ? $opt['c'] : ( isset($opt['config']) ? $opt['config'] : './'. $config_name );
 
         $this -> load_json_config( $opt, $config_path );
@@ -56,12 +55,14 @@ class PHPLameConsole
      */
     private function load_json_config( &$storage, $path )
     {
-        if ( file_exists($path) && is_file($path) )
+        if ( is_string($path) && file_exists($path) && is_file($path) )
         {
             $config_opt = json_decode( file_get_contents( $path ), true );
             if ( empty($config_opt) ) throw new Exception("Not valid JSON");
-            else $storage = array_merge( $storage, $config_opt );
+            else $storage = PHPLameUtils::array_merge_assoc( $storage, $config_opt );
         }
+        elseif ( is_array($path) )
+            foreach( $path as $val ) $this -> load_json_config( $storage, $val );
     }
 
     /**
@@ -70,10 +71,10 @@ class PHPLameConsole
     private function execute()
     {
         foreach( $this -> get_basedir() as $basedir )
+        if ( is_dir($basedir) || PHPLameUtils::is_php( $basedir ) )
         {
             $opt = self::$options;
-            $cfg = $basedir. '/'. self::$config_name;
-            $this -> load_json_config( $opt, $cfg );
+            $this -> load_json_config( $opt, $basedir. '/'. self::$config_name );
 
             $suite = new PHPLameSuite( $basedir, $opt );
 

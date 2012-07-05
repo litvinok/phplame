@@ -53,7 +53,7 @@ class PHPLameSuite
             foreach ( $this -> scandir( $this -> base ) as $file ) $this -> build( $file );
         }
 
-        elseif ( is_file( $this -> base )) {
+        elseif ( is_file( $this -> base ) && PHPLameUtils::is_php( $this -> base) ) {
             $this -> build( $this -> base );
         }
 
@@ -76,7 +76,7 @@ class PHPLameSuite
      *
      * @param string $file
      */
-    function build( $file )
+    private function build( $file )
     {
         foreach ( $this -> scanfile( $file ) as $class => $params )
         {
@@ -102,7 +102,7 @@ class PHPLameSuite
      * @param array  $params
      * @param array  $output
      */
-    function report( $class, $params, $output )
+    private function report( $class, $params, $output )
     {
         if ( empty($output)) return false;
 
@@ -130,7 +130,7 @@ class PHPLameSuite
      *
      * @param  string   $dir
      */
-    function scandir( $dir )
+    private function scandir( $dir )
     {
         $files = array();
         if ($handle = opendir($dir))
@@ -140,7 +140,7 @@ class PHPLameSuite
                 if ( $file!= "." && $file != ".." && ( $target = sprintf( "%s/%s", $dir, $file) ) )
                 {
                     if ( is_dir($target) ) $files = array_merge( $files, $this -> scandir( $target ));
-                    elseif ( preg_match('/\.(php[tb54]?|phtml|inc|phplame)$/', $file) ) $files[] = $target;
+                    elseif ( PHPLameUtils::is_php( $file ) ) $files[] = $target;
                 }
             }
             closedir($handle);
@@ -154,7 +154,7 @@ class PHPLameSuite
      *
      * @param  string   $file
      */
-    function scanfile( $file )
+    private function scanfile( $file )
     {
         require_once( $file );
 
@@ -187,7 +187,7 @@ class PHPLameSuite
     /**
      * Check options for run
      */
-    function check()
+    private function check()
     {
         if ( isset($this -> options['junit']) && !file_exists( $this -> options['junit'] ) )
         {
@@ -198,31 +198,31 @@ class PHPLameSuite
         }
     }
 
-
     /**
      * Print to STDOUT name of software and version
      */
-    function before()
+    private function before()
     {
         if ( $GLOBALS['SILENT_MODE'] !== true )
         {
             if ( $GLOBALS['NOCOLOR_MODE'] !== true )
-                printf( "\033c\033]2;PHPLame - Processing\007\033[1mPHPLame Benchmark | version: %s\n\n\033[0m", PHPLAME_VERSION );
-            else printf( "PHPLame Benchmark | version: %s\n\n", PHPLAME_VERSION );
+                printf( "\033[1mPHPLame Benchmark | version: %s\n\033[0m", PHPLAME_VERSION );
+            else printf( "PHPLame Benchmark | version: %s\n", PHPLAME_VERSION );
+
+            printf("Scanning %s\n\n", $this -> base);
         }
     }
 
     /**
      * Print to STDOUT checked files
      */
-    function after()
+    private function after()
     {
         if ( $GLOBALS['SILENT_MODE'] !== true )
         {
-            global $resume;
             if ( $GLOBALS['NOCOLOR_MODE'] !== true )
-                printf( "\n\n---\n%s\n\n\033[0m", join( PHP_EOL, $this -> resume ) );
-            else printf( "\n\n---\n%s\n\n", join( PHP_EOL, $this -> resume ) );
+                printf( "\n\n---\nChecked %d files:\n%s\n\n\033[0m", count($this -> resume), join( PHP_EOL, $this -> resume ) );
+            else printf( "\n\n---\nChecked %d files:\n%s\n\n", count($this -> resume), join( PHP_EOL, $this -> resume ) );
         }
     }
 
@@ -231,7 +231,7 @@ class PHPLameSuite
      *
      * @param $message
      */
-    function error( $message )
+    private function error( $message )
     {
         die( "PHPLame: $message ".PHP_EOL );
     }

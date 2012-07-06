@@ -219,13 +219,14 @@ class PHPLame
             'ok' => true,
             'err' => '',
             'count' => 0,
+            'repeats' => array( 'total' => 0, 'avg' => 0 ),
             'time' => array( 'real' => $template_time, 'user' => $template_time, 'sys' => $template_time ),
             'description' => array( 'lines' => array( $method -> getStartLine(), $method -> getEndLine() )
             )
         );
 
-        // get report of threads: case | pid | time | rtime | utime | stime | status | errmsg
-        while ( ( list( $mhd, $thd, $tm, $rtm, $utm, $stm, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
+        // get report of threads: case | pid | time | rtime | utime | stime | repeats | status | errmsg
+        while ( ( list( $mhd, $thd, $tm, $rtm, $utm, $stm, $rps, $st, $em ) = fgetcsv($tmp, 0, "\t")) !== FALSE)
         {
             if ( $mhd === $method -> name )
             {
@@ -233,6 +234,7 @@ class PHPLame
                 elseif( !empty($em) ) $status['err'] = $em;
 
                 $status['count'] ++;
+                $status['repeats']['total'] += $rps;
 
                 foreach( array( 'real' => $rtm, 'user' => $utm, 'sys' => $stm ) as $what => $tm )
                 {
@@ -248,6 +250,8 @@ class PHPLame
                 }
             }
         }
+
+        $status['repeats']['avg'] = $status['repeats']['total'] / $status['count'];
 
         foreach ( $status['time'] as $key => &$ref )
         {
@@ -335,14 +339,15 @@ class PHPLame
             unset( $usage );
 
             fwrite($hander, sprintf (
-                // case | pid | time | rtime | utime | stime | status | errmsg
-                "%s\t%d\t%d\t%d\t%d\t%d\t%b\t%s\n",
+                // case | pid | time | rtime | utime | stime | repeats | status | errmsg
+                "%s\t%d\t%d\t%d\t%d\t%d\t%d\t%b\t%s\n",
                 $method -> name,
                 getmypid(),
                 $time,
                 ( microtime( true ) - $time ) * 1000000,
                 $usrtime,
                 $systime,
+                $repeats - $repeat - 1,
                 $exception === false,
                 $exception !== false ? $exception : ''
             ));

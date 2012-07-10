@@ -216,7 +216,7 @@ class PHPLame
 
         $status = array
         (
-            'ok' => true,
+            'ok' => false,
             'err' => '',
             'count' => 0,
             'repeats' => array( 'total' => 0, 'avg' => 0 ),
@@ -230,8 +230,8 @@ class PHPLame
         {
             if ( $mhd === $method -> name )
             {
-                if ( $st != true ) $status['ok'] = false;
-                elseif( !empty($em) ) $status['err'] = $em;
+                if ( $st > 0 ) $status['ok'] = true;
+                elseif( strlen($em) !== false ) $status['err'] = $em;
 
                 $status['count'] ++;
                 $status['repeats']['total'] += $rps;
@@ -348,8 +348,8 @@ class PHPLame
                 $usrtime,
                 $systime,
                 $repeats - $repeat - 1,
-                $exception === false,
-                $exception !== false ? $exception : ''
+                ($exception === false ? 1 : 0),
+                ($exception !== false ? $exception : '')
             ));
 
             if ( $params['after'] != false ) call_user_func_array( array($this, $params['after']), array());

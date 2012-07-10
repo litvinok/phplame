@@ -34,8 +34,8 @@ class PHPLame_JSON
                 'average' => number_format( $ref['avg'], 6 ),
                 'median' => number_format( $ref['percent'][50], 6),
                 '90percentile' => number_format( $ref['percent'][90], 6 ),
-                'operationsPerSecond' => number_format( $result['repeats']['avg'] / $ref['avg'] , 6 ),
-                'durationOfOperation' => number_format( $ref['avg'] / $result['repeats']['avg'] , 6 ),
+                'operationsPerSecond' => ( $ref['avg'] > 0 ? number_format( $result['repeats']['avg'] / $ref['avg'] , 6 ) : 0 ),
+                'durationOfOperation' => ( $result['repeats']['avg'] > 0 ? number_format( $ref['avg'] / $result['repeats']['avg'] , 6 ) : 0 ),
             );
         }
     }

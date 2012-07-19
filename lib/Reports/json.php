@@ -29,13 +29,13 @@ class PHPLame_JSON
                 'title' => $title,
                 'executionTime' => $result['time']['real']['total'],
                 'invocations' => $result['count'],
-                'min' => number_format( $ref['min'], 6 ),
-                'max' => number_format( $ref['max'], 6 ),
-                'average' => number_format( $ref['avg'], 6 ),
-                'median' => number_format( $ref['percent'][50], 6),
-                '90percentile' => number_format( $ref['percent'][90], 6 ),
-                'operationsPerSecond' => ( $ref['avg'] > 0 ? number_format( $result['repeats']['avg'] / $ref['avg'] , 6 ) : 0 ),
-                'durationOfOperation' => ( $result['repeats']['avg'] > 0 ? number_format( $ref['avg'] / $result['repeats']['avg'] , 6 ) : 0 ),
+                'min' => $this -> number( $ref['min'] ),
+                'max' => $this -> number( $ref['max'] ),
+                'average' => $this -> number( $ref['avg']),
+                'median' => $this -> number( $ref['percent'][50] ),
+                '90percentile' => $this -> number( $ref['percent'][90] ),
+                'operationsPerSecond' => ( $ref['avg'] > 0 ? $this -> number( $result['repeats']['avg'] / $ref['avg'] ) : 0 ),
+                'durationOfOperation' => ( $result['repeats']['avg'] > 0 ? $this -> number( $ref['avg'] / $result['repeats']['avg'] ) : 0 ),
             );
         }
     }
@@ -57,5 +57,15 @@ class PHPLame_JSON
     public function save( $file )
     {
         file_put_contents( $file, json_encode($this -> document) );
+    }
+
+    /**
+     * Return float number format
+     *
+     * @param $value
+     */
+    private function number( $value )
+    {
+        return number_format( $value, 6, '.', '' );
     }
 }

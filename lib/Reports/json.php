@@ -66,6 +66,6 @@ class PHPLame_JSON
      */
     private function number( $value )
     {
-        return number_format( $value, 6, '.', '' );
+        return floatval(number_format( $value, 6, '.', '' ));
     }
 }

@@ -314,7 +314,7 @@ class PHPLame
             $repeat = $repeats;
             $exception = false;
             $return = null;
-            $usage[0] = getrusage(1);
+            $usage[0] = getrusage();
             $time = microtime( true );
 
             try

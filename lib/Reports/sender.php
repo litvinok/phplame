@@ -20,7 +20,7 @@ class PHPLame_Sender
      */
     function __construct( $name, $params, array $data )
     {
-        $label = sprintf( "PHP %s", substr(phpversion(),0,strpos(phpversion(), '-')) );
+        $label = sprintf( "PHP %s", phpversion() );
         $time = time();
         $this -> requests = array();
 

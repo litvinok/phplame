@@ -108,14 +108,26 @@ class PHPLameSuite
 
         if ( isset( $this -> options['junit']) && !empty($this -> options['junit']) )
         {
-            $report = new PHPLame_JUnit( $class, $params, $output );
-            $report -> document -> save( $this -> options['junit']."/TEST-$class.xml" );
+            try {
+                $report = new PHPLame_JUnit( $class, $params, $output );
+                $report -> document -> save( $this -> options['junit']."/TEST-$class.xml" );
+            } catch ( Exception $e ) { printf($e); }
         }
 
         if ( isset( $this -> options['json']) && !empty($this -> options['json']) )
         {
-            $report = new PHPLame_JSON( $class, $params, $output );
-            $report -> save( $this -> options['json']."/$class.json" );
+            try {
+                $report = new PHPLame_JSON( $class, $params, $output );
+                $report -> save( $this -> options['json']."/$class.json" );
+            } catch ( Exception $e ) { printf($e); }
+        }
+
+        if ( isset( $this -> options['send']) && !empty($this -> options['send']) )
+        {
+            try {
+                $report = new PHPLame_Sender( $class, $params, $output );
+                $report -> send( $this -> options['send'] );
+            } catch ( Exception $e ) { printf($e); }
         }
 
         if ( isset($this -> options['debug']) )

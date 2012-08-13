@@ -64,19 +64,14 @@ class PHPLame_Sender
      */
     public function send( $server, $method = "POST" )
     {
-        $curl = curl_init( $server );
-        curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $method );
-        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true);
-
         foreach( $this -> requests as $data )
         {
-            $json = json_encode($data);
-            curl_setopt( $curl, CURLOPT_POSTFIELDS, $json);
-            curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', 'Content-Length: ' . strlen($json)) );
-            $result = curl_exec($curl);
+            @file_get_contents( $server, NULL, stream_context_create(array( 'http' => array(
+                'method' => $method,
+                'contentType' => 'application/json',
+                'content' => http_build_query($data)
+            ))));
         }
-
-        return curl_close($curl);
     }
 
     /**

@@ -21,7 +21,6 @@ class PHPLame_Sender
     function __construct( $name, $params, array $data )
     {
         $label = sprintf( "PHP %s", phpversion() );
-        $time = time();
         $this -> requests = array();
 
         foreach( $data as $title => $result )
@@ -31,7 +30,6 @@ class PHPLame_Sender
             (
                 'name' => strtoupper( $title ),
                 'label' => $label,
-                'time' => $time,
                 'type' => $GLOBALS['TIME_SPEC_USER'],
                 'class' => $name,
                 'report' => array(
@@ -66,6 +64,7 @@ class PHPLame_Sender
     {
         foreach( $this -> requests as $data )
         {
+            print_r(http_build_query($data));
             @file_get_contents( $server, NULL, stream_context_create(array( 'http' => array(
                 'method' => $method,
                 'contentType' => 'application/json',

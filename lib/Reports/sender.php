@@ -64,12 +64,14 @@ class PHPLame_Sender
     {
         foreach( $this -> requests as $data )
         {
-            print_r(http_build_query($data));
-            @file_get_contents( $server, NULL, stream_context_create(array( 'http' => array(
-                'method' => $method,
-                'contentType' => 'application/json',
-                'content' => http_build_query($data)
-            ))));
+            $str = json_encode($data);
+            @file_get_contents($server, null, stream_context_create(array(
+                'http' => array(
+                    'method' => $method,
+                    'header' => "Content-Type: application/json\r\nContent-Length: " . strlen($str) . "\r\n",
+                    'content' => $str
+                )
+            )));
         }
     }
 

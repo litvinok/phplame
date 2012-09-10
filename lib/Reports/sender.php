@@ -22,6 +22,12 @@ class PHPLame_Sender
     {
         $label = sprintf( "PHP %s", phpversion() );
         $this -> requests = array();
+        $host = array(
+            'name' =>  strtoupper(php_uname('n')),
+            'system' => php_uname('s'),
+            'machine' => php_uname('m'),
+            'release' => php_uname('r')
+        );
 
         foreach( $data as $title => $result )
         {
@@ -32,6 +38,7 @@ class PHPLame_Sender
                 'label' => $label,
                 'type' => $GLOBALS['TIME_SPEC_USER'],
                 'class' => $name,
+                'host' => $host,
                 'report' => array(
                     'executionTime' => $result['time']['real']['total'],
                     'invocations' => $result['count'],

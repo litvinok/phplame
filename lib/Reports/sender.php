@@ -37,7 +37,7 @@ class PHPLame_Sender
                 'name' => strtoupper( $title ),
                 'label' => $label,
                 'type' => $GLOBALS['TIME_SPEC_USER'],
-                'class' => $name,
+                'class' => $params['suite'],
                 'host' => $host,
                 'report' => array(
                     'executionTime' => $result['time']['real']['total'],

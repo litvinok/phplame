@@ -26,7 +26,8 @@ class PHPLame_Sender
             'name' =>  strtoupper(php_uname('n')),
             'system' => php_uname('s'),
             'machine' => php_uname('m'),
-            'release' => php_uname('r')
+            'release' => php_uname('r'),
+            'who' => exec('whoami')
         );
 
         foreach( $data as $title => $result )

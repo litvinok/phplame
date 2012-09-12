@@ -9,4 +9,4 @@ define( 'PHPLAME_VERSION', 'dev' );
 
 require_once( PHPLAME_HOME.'/lib/autoload.php' );
 
-new PHPLameConsole( 'phplame.json', 'c:', 'config: time: average: nocolor: verbose: silent: debug: bootstrap:: tags:: json:: junit::' );
+new PHPLameConsole( 'phplame.json', 'c:s:', 'config: time: average: nocolor: verbose: silent: debug: bootstrap:: tags:: json:: junit::' );

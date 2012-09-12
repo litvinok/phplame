@@ -122,11 +122,17 @@ class PHPLameSuite
             } catch ( Exception $e ) { printf($e); }
         }
 
-        if ( isset( $this -> options['send']) && !empty($this -> options['send']) )
+        $send_report_url = null;
+
+        foreach( array('send', 's') as $s )
+            if ( isset( $this -> options[$s]) && !empty($this -> options[$s]) )
+                $send_report_url = $this -> options[$s];
+
+        if ( $send_report_url !== null )
         {
             try {
                 $report = new PHPLame_Sender( $class, $params, $output );
-                $report -> send( $this -> options['send'] );
+                $report -> send( $send_report_url );
             } catch ( Exception $e ) { printf($e); }
         }
 

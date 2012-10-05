@@ -4,6 +4,9 @@
  * Date: 10/3/12 8:23 AM
  */
 
+define( 'DEBUG_TRACE', TRUE );
+define( 'TRACE_SEPARATOR', sprintf("%'-80s", '') );
+
 class phplame extends helper
 {
     /**
@@ -18,17 +21,55 @@ class phplame extends helper
      */
     private $logs = array();
 
-    /**
-     * @param $paths
+    /*
+     * Run micro-benchmarking
      */
-    function __construct( $paths, $reports )
+    function __construct()
     {
-        foreach( self::scan_dir_recursive($paths) as $file ) $this -> __parse( $file );
+        // Parse options
+        $args = array( 'c' => 'config', 'r' => 'reports-dir', 'd' => 'tests-dir', 'b' => 'bootstrap' );
+        $options = getopt( implode(':',array_keys($args)).':' );
 
+        // Convert from the short to the long options
+        foreach( $args as $from => $to ) if (isset( $options[$from] ))
+        {
+            $options[$to] = $options[$from];
+            unset($options[$from]);
+        }
+
+        // Load json-config
+        if ( isset($options['config'])  )
+        {
+            self::config_load( $options['config'], $options );
+        }
+
+        // Welcome message
+        self::trace( '>> PHPLame\'s Micro-Benchmarking' );
+
+        // Check for set directory with tests
+        if ( !isset($options['tests-dir']) )
+        {
+            self::trace( PHP_EOL.'Please, choose directory for test..'.PHP_EOL );
+            return;
+        }
+
+        // Load bootstrap
+        if ( isset($options['bootstrap']) && is_file($options['bootstrap']) )
+        {
+            include( $options['bootstrap'] );
+        }
+
+        // Parse chosen directory
+        foreach( self::scan_dir_recursive( $options['tests-dir'] ) as $file )
+        {
+            $this -> __parse( $file );
+        }
+
+        // Executing benchmarks
         if ( sizeof( $this -> objects ) > 0 )
         {
             self::gc( true );
-            $this -> __measure( $reports );
+            $this -> __measure( $options['reports-dir'] );
             self::gc( false );
         }
     }
@@ -81,7 +122,7 @@ class phplame extends helper
     /**
      * @param bool $reports
      */
-    private function __measure( $reports = false )
+    private function __measure( &$reports = false )
     {
         $report = new report( $reports );
 
@@ -99,7 +140,9 @@ class phplame extends helper
                     {
                         try
                         {
-                            echo PHP_EOL. $name .' :: '. $test -> params['test'] .' .. ';
+                            self::trace( PHP_EOL.TRACE_SEPARATOR );
+                            self::trace( $name .' :: '. $test -> params['test'] );
+                            self::trace( TRACE_SEPARATOR );
 
                             $this -> __hook( $entity, 'before' );
 
@@ -123,7 +166,11 @@ class phplame extends helper
 
                             $this -> __hook( $entity, 'after' );
 
-                            echo number_format( $real , 5 ) . 'sec /' . $params['iterations'];
+                            self::trace( 'Rounds: '.$params['rounds'] );
+                            self::trace( 'Iterations: '.$params['iterations'] );
+                            self::trace( 'Average time: '.number_format($real, 4). ' sec.' );
+                            self::trace( 'Average CPU time: '.number_format($sys, 4). ' sec.' );
+
                             $report -> pass( $name, $test, $params, $real, $sys ) ;
 
                             unset($params);
@@ -131,7 +178,7 @@ class phplame extends helper
                         catch (Exception $e)
                         {
                             $report -> fail($name, $test, $e -> getMessage() );
-                            echo $e -> getMessage();
+                            self::trace( $e -> getMessage() );
                         }
                     }
 
@@ -141,9 +188,11 @@ class phplame extends helper
                     unset($entity);
                     self::gc();
                 }
-                catch (Exception $e) { echo $e -> getMessage() .PHP_EOL; }
+                catch (Exception $e) { self::trace( $e -> getMessage() ); }
             }
         }
+
+        self::trace( PHP_EOL.TRACE_SEPARATOR );
     }
 
     /**
@@ -164,13 +213,23 @@ class phplame extends helper
      * @param $method
      * @param $params
      * @param $expected
+     * @param int $iterations
+     * @param int $limit
      * @return float|int
      */
-    private function __calibration( &$class, &$method, &$params, $expected )
+    private function __calibration( &$class, &$method, &$params, $expected, $iterations = 1, $limit = 100 )
     {
-        list( $time ) = $this -> __benchmark( $class, $method, $params );
-        $value = floor( $expected / $time );
-        return $value > 0 ? $value : 1;
+        $trying = 0;
+
+        do {
+            if (isset($time)) $iterations = ( $time !== 0 ? floor( $iterations * $expected / $time ) : $iterations *2 );
+            list( $time ) = $this -> __benchmark( $class, $method, $params, 1, $iterations );
+
+            if ( ++$trying > $limit ) { self::trace( 'Failed calibration'); return 0; }
+            self::trace( '[Try #'.($trying).'] Calibration for '.$iterations.' iterations = '.number_format($time, 6).' sec.');
+        }
+        while( ceil($time) < $expected );
+        return $iterations > 0 ? $iterations : 1;
     }
 
     /**

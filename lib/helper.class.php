@@ -18,7 +18,11 @@ class helper
         if (is_file($path)) return $path;
         else $files = array();
 
-        if ($handle = opendir($path))
+        if ( is_array($path) ) foreach( $path as $item ) {
+            $files = array_merge( $files, self::scan_dir_recursive( $item ));
+        }
+
+        if ( is_dir($path) && $handle = opendir($path))
         {
             while ( false !== ($file = readdir($handle)) )
             {
@@ -136,5 +140,53 @@ class helper
         }
 
         return false;
+    }
+
+    /**
+     * @param $string
+     */
+    protected static function trace( $string )
+    {
+        if ( DEBUG_TRACE === TRUE ) echo $string.PHP_EOL;
+    }
+
+    /**
+     * @param $path
+     * @param $options
+     */
+    protected static function config_load( $path, &$options )
+    {
+        if ( is_array($path))
+        {
+            foreach( $path as &$item )
+            {
+                $options = self::array_merge_assoc($options, self::config_load($item, $options ));
+            }
+        }
+
+        if ( is_file($path) )
+        {
+            $json = (array)json_decode(file_get_contents($path));
+            self::option_replace( $json, '%DIR%', dirname($path) );
+
+            $options = self::array_merge_assoc( $options, $json );
+            unset($json);
+        }
+
+
+    }
+
+    /**
+     * @param $values
+     * @param $find
+     * @param $set
+     */
+    protected static function option_replace( &$values, $find, $set )
+    {
+        foreach( $values as &$item )
+        {
+            if ( is_array($item) || is_object($item)) self::option_replace($item, $find, $set);
+            else $item = str_replace( $find, $set, $item);
+        }
     }
 }

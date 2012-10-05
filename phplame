@@ -1,4 +1,5 @@
 #!/usr/bin/env php
+
 <?php
 /**
  * PHPLame by Alex Litvinok
@@ -8,4 +9,5 @@ define( 'PHPLAME_HOME', dirname(__FILE__) );
 define( 'PHPLAME_VERSION', 'dev' );
 
 require_once( PHPLAME_HOME.'/lib/autoload.php' );
-new phplame( PHPLAME_HOME.'/tests', PHPLAME_HOME.'/reports');
+new phplame();
+//PHPLAME_HOME.'/tests', PHPLAME_HOME.'/reports'

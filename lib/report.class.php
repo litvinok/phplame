@@ -23,10 +23,17 @@ class report
 
     /**
      * @param $path
+     * @throws Exception
      */
     function __construct( $path )
     {
         self::$path = $path;
+
+        // Try to create directory for reports
+        if ((!empty( $path ) && !file_exists($path) && is_writable( dirname($path) )) && !mkdir( $path ))
+        {
+            throw new Exception('Please, create directory for reports!');
+        }
     }
 
     /**

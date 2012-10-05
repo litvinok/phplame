@@ -5,69 +5,30 @@
  *
  * @suite: TDD PHPLame
  */
-class Tests extends PHPLame
+class Tests
 {
-    public $count = 0;
-    public $save = 0;
+    private $count = 0;
 
     /**
-     * @test: Testcase 1
-     * @invocations: 100
-     * @before: clean_count
+     * @test: Simple Test 1
+     * @rounds: 3
+     * @target_time: 40
+     * @before_case: before_case
      */
-    public function testcase_1()
+    public function test_1()
     {
-        if ( $this -> count === 0 ) $this -> count++;
-        else throw new Exception('Count not clean');
+        if ($this -> count !== 2 ) throw new Exception('FAIL');
+
+        sleep(1);
     }
 
-    /**
-     * @test: Testcase 2
-     * @invocations: 100
-     * @before: unclean_count
-     * @after: clean_count
-     */
-    public function testcase_2()
-    {
-        if ( $this -> count !== 0 ) $this -> count++;
-        else throw new Exception('Count clean');
-    }
-
-    /**
-     * @test: Testcase 3
-     * @repeats: 100
-     * @invocations: 10
-     * @beforecase: clean_count
-     */
-    public function testcase_3()
-    {
-        $this -> count;
-        if ( $this -> count++ > $this -> save ) throw new Exception('Fail structure');
-        else $this -> save++;
-    }
-
-
-    /**
-     * @test: Testcase 4
-     * @invocations: 100
-     * @beforecase: unclean_count
-     * @before: clean_count
-     */
-    public function testcase_4()
-    {
-        if ( $this -> count === 0 ) $this -> count++;
-        else throw new Exception('Count clean');
-    }
-
-    public function clean_count()
-    {
-        $this -> count = 0;
-        $this -> save = 1;
-    }
-
-    public function unclean_count()
+    public function before()
     {
         $this -> count = 1;
-        $this -> save = 0;
+    }
+
+    public function before_case()
+    {
+        $this -> count = 2;
     }
 }

@@ -8,5 +8,4 @@ define( 'PHPLAME_HOME', dirname(__FILE__) );
 define( 'PHPLAME_VERSION', 'dev' );
 
 require_once( PHPLAME_HOME.'/lib/autoload.php' );
-
-new PHPLameConsole( 'phplame.json', 'c:s:', 'config: time: average: nocolor: verbose: silent: debug: bootstrap:: tags:: json:: junit::' );
+new phplame( PHPLAME_HOME.'/tests', PHPLAME_HOME.'/reports');

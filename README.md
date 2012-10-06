@@ -1,7 +1,9 @@
-Introduction
+PHPLame
 ------------
 
-PHPLame [![Build Status](https://secure.travis-ci.org/litvinok/phplame.png?branch=v2)](http://travis-ci.org/litvinok/phplame) - library for micro-benchmarging in PHP.
+[![Build Status](https://secure.travis-ci.org/litvinok/phplame.png?branch=v2)](http://travis-ci.org/litvinok/phplame)
+
+The library for micro-benchmarging in PHP.
 
 Features
 ------------

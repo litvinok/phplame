@@ -245,6 +245,8 @@ class phplame extends helper
     private function __benchmark( &$class, &$method, &$params, $rounds = 1, $iterations = 1 )
     {
         $real = $sys = 0;
+
+        $this -> __hook( $class, 'beforeCase' );
         $this -> __hook( $class, $params['before_case'] );
 
         for( $r = 0; $r < $rounds; $r++ )
@@ -270,6 +272,8 @@ class phplame extends helper
         }
 
         $this -> __hook( $class, $params['after_case'] );
+        $this -> __hook( $class, 'afterCase' );
+
         self::gc();
 
         return array( $real / $rounds, ( $sys / $rounds ) / 1000000 );

@@ -49,10 +49,10 @@ class report
         (
             'title'         => $test -> params['test'],
             'class'         => $class,
-            'rounds'        => $params['rounds'],
-            'iterations'    => $params['iterations'],
-            'runTime'       => $real,
-            'runTimeCPU'    => $sys
+            'rounds'        => (int) $params['rounds'],
+            'iterations'    => (int) $params['iterations'],
+            'runTime'       => number_format($real, 12),
+            'runTimeCPU'    => number_format($sys, 12)
         );
     }
 

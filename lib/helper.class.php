@@ -15,12 +15,17 @@ class helper
      */
     protected static function scan_dir_recursive( $path )
     {
-        if (is_file($path)) return $path;
-        else $files = array();
+        $files = array();
 
-        if ( is_array($path) ) foreach( $path as $item ) {
-            $files = array_merge( $files, self::scan_dir_recursive( $item ));
+        if ( is_array($path) )
+        {
+            foreach( $path as $item )
+            {
+                $files = array_merge( $files, self::scan_dir_recursive( $item ));
+            }
+            return $files;
         }
+        elseif ( is_file($path) ) return $path;
 
         if ( is_dir($path) && $handle = opendir($path))
         {

@@ -56,7 +56,7 @@ class phplame extends helper
         // Load bootstrap
         if ( isset($options['bootstrap']) && is_file($options['bootstrap']) )
         {
-            include( $options['bootstrap'] );
+            include_once( $options['bootstrap'] );
         }
 
         // Parse chosen directory
@@ -83,7 +83,7 @@ class phplame extends helper
     {
         try
         {
-            include( $file );
+            include_once( $file );
 
             foreach( self::token_classes( $file ) as $class )
             {

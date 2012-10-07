@@ -142,6 +142,10 @@ class report
             {
                 $element = $xml -> createElement( 'testcase' );
 
+                $element -> appendChild( $this -> __xml_attribute( $xml, 'name', $item['title'] ) );
+                $element -> appendChild( $this -> __xml_attribute( $xml, 'classname', $item['class'] ) );
+                $element -> appendChild( $this -> __xml_attribute( $xml, 'status', false ) );
+
                 $err = $xml -> createElement( 'error' );
                 $err -> appendChild( $this -> __xml_attribute( $xml, 'message', $item['message'] ) );
 

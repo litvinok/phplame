@@ -25,7 +25,7 @@ class helper
             }
             return $files;
         }
-        elseif ( is_file($path) ) return $path;
+        elseif ( is_file($path) ) return array($path);
 
         if ( is_dir($path) && $handle = opendir($path))
         {

@@ -51,8 +51,8 @@ class report
             'class'         => $class,
             'rounds'        => (int) $params['rounds'],
             'iterations'    => (int) $params['iterations'],
-            'runTime'       => number_format($real, 12),
-            'runTimeCPU'    => number_format($sys, 12)
+            'runTime'       => (float) number_format($real, 12),
+            'runTimeCPU'    => (float) number_format($sys, 12)
         );
     }
 

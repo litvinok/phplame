@@ -51,8 +51,10 @@ class report
             'class'         => $class,
             'rounds'        => (int) $params['rounds'],
             'iterations'    => (int) $params['iterations'],
-            'runTime'       => (float) number_format($real, 12),
-            'runTimeCPU'    => (float) number_format($sys, 12)
+            'timeReal'      => (float) number_format( $real, 12, '.', '' ),
+            'timeUser'      => (float) number_format( $sys, 12, '.', '' ),
+            'opsReal'       => (float) number_format( ( $params['iterations'] / $real ), 12, '.', '' ),
+            'opsUser'       => (float) number_format( ( $params['iterations'] / $sys ), 12, '.', '' )
         );
     }
 
@@ -114,12 +116,12 @@ class report
 
         $child = $xml -> createElement( 'testsuite' );
         $time = 0;
-        if (isset($passed)) foreach( $passed as &$item ) $time += $item['runTime'];
+        if (isset($passed)) foreach( $passed as &$item ) $time += $item['timeReal'];
 
         $child -> appendChild( $this -> __xml_attribute($xml, 'name', $name ) );
         $child -> appendChild( $this -> __xml_attribute($xml, 'tests', sizeof($passed) + sizeof($failed) ) );
         $child -> appendChild( $this -> __xml_attribute($xml, 'errors', sizeof($failed)) );
-        $child -> appendChild( $this -> __xml_attribute($xml, 'time', number_format( $time, 6) ) );
+        $child -> appendChild( $this -> __xml_attribute($xml, 'time', number_format( $time, 6, '.', '') ) );
 
         if (isset($passed))
         {
@@ -129,7 +131,7 @@ class report
 
                 $element -> appendChild( $this -> __xml_attribute( $xml, 'name', $item['title'] ) );
                 $element -> appendChild( $this -> __xml_attribute( $xml, 'classname', $item['class'] ) );
-                $element -> appendChild( $this -> __xml_attribute( $xml, 'time', $item['runTime'] ) );
+                $element -> appendChild( $this -> __xml_attribute( $xml, 'time', $item['timeReal'] ) );
                 $element -> appendChild( $this -> __xml_attribute( $xml, 'status', true ) );
 
                 $child -> appendChild( $element );

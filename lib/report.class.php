@@ -53,8 +53,8 @@ class report
             'iterations'    => (int) $params['iterations'],
             'timeReal'      => (float) number_format( $real, 12, '.', '' ),
             'timeUser'      => (float) number_format( $sys, 12, '.', '' ),
-            'opsReal'       => (float) number_format( ( $params['iterations'] / $real ), 12, '.', '' ),
-            'opsUser'       => (float) number_format( ( $params['iterations'] / $sys ), 12, '.', '' )
+            'opsReal'       => (float) number_format( $real ? ( $params['iterations'] / $real ) : 0, 12, '.', '' ),
+            'opsUser'       => (float) number_format( $sys ? ( $params['iterations'] / $sys ) : 0, 12, '.', '' )
         );
     }
 

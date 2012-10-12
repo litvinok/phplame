@@ -105,8 +105,10 @@ The JSON report has following format:
 			class:		String,
 			rounds:		Number,
 			iterations:	Number,
-			runTime:	Number,
-			runTimeCPU:	Number
+			timeReal:	Number,
+			timeUser:	Number,
+			opsReal:    Number,
+            opsUser:    Number
 		},
 		...
 	]

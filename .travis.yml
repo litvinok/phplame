@@ -1,7 +1,0 @@
-language: php
-
-php:
-  - 5.3
-  - 5.4
-
-script: php phplame -c config.json

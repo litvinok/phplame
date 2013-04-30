@@ -264,9 +264,11 @@ class phplame extends helper
             $marker_end_time = microtime( true );
             $marker_end_usage = getrusage();
 
+            $ru_stime_start = $marker_start_usage['ru_stime.tv_sec']*1e6 + $marker_start_usage['ru_stime.tv_usec'];
+            $ru_stime_end = $marker_end_usage['ru_stime.tv_sec']*1e6 + $marker_end_usage['ru_stime.tv_usec'];
+
             $real += $marker_end_time - $marker_start_time;
-            $sys  += ( $marker_end_usage['ru_stime.tv_sec']*1e6 + $marker_end_usage['ru_stime.tv_usec'] ) -
-                     ( $marker_start_usage['ru_stime.tv_sec']*1e6 + $marker_start_usage['ru_stime.tv_usec'] );
+            $sys  += $ru_stime_start === $ru_stime_end ? $ru_stime_end : $ru_stime_end - $ru_stime_start;
 
             $this -> __hook( $class, $params['after'] );
         }
